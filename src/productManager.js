@@ -1,5 +1,4 @@
-const { trace } = require('console');
-const fs = require('fs');
+import fs from 'fs';
 
 class ProdcutManager {
   path;
@@ -7,7 +6,7 @@ class ProdcutManager {
   static idProduct = 0;
 
   constructor () {
-    this.path = './data/products.json';
+    this.path = './src/data/products.json';
     this.products = this.getProductsInFile();
   }
 
@@ -60,16 +59,19 @@ class ProdcutManager {
     return '¡Se agrego exitosamente!';
   }
 
-  getProducts () {
+  getProducts (limit = 0) {
+    limit = Number(limit);
+    if (limit > 0)
+      return this.products.slice(0, limit);
     return this.products;
   }
 
-  getProductById () {
+  getProductById (id) {
     const producto = this.products.find(product => product.id == id);
     if (producto) 
       return producto;
     else 
-      return `Not Found producto con id ${id}`;
+      return `Not Found product con id ${id}`;
   }
 
   updateProduct (id, objectUpdate) {
@@ -98,4 +100,4 @@ class ProdcutManager {
   }
 }
 
-module.exports = ProdcutManager;
+export default ProdcutManager;
