@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-class ProdcutManager {
+class ProductManager {
   path;
   products;
   static idProduct = 0;
@@ -20,13 +20,13 @@ class ProdcutManager {
     };
   }
 
-    saveFile() {
-      try {
-        fs.writeFileSync(this.path, JSON.stringify(this.products));
-      } catch (error) {
-        console.error (`Ocurrio un error desconcido al momento de guardar el archivo, ${error}`);
-      };
-    }
+  saveFile() {
+    try {
+      fs.writeFileSync(this.path, JSON.stringify(this.products));
+    } catch (error) {
+      console.error (`Ocurrio un error desconcido al momento de guardar el archivo, ${error}`);
+    };
+  }
 
     appointId () {
       let id = 1;
@@ -35,24 +35,26 @@ class ProdcutManager {
       return id;
     }
 
-  addProduct (title, description, price, thumbnail, code, stock) {
-    if (!title || !description || !price || !thumbnail || !code || !stock)
-      return `Todos los parametros son requeridos`;
+  addProduct (title, category, thumbnail, description, price, code, stock, status=true) {
+    if (!title ||!category || !thumbnail || !description || !price  || !code || !stock)
+      return `Todos los parametros son requeridos (title, catogory, thumbnail, description, price, code, stock)`;
 
     const codeRep = this.products.some(product => product.code == code);
     if (codeRep)
       return `El codigo ${code} ya se encuentra registrado`;
 
-    ProdcutManager.idProduct = ProdcutManager.idProduct + 1;
+    ProductManager.idProduct = ProductManager.idProduct + 1;
     const id = this.appointId();
     const newProduct = {
       id:id,
       title:title,
+      category:category,
+      thumbnail:thumbnail,
       description:description,
       price:price,
-      thumbnail:thumbnail,
       code:code,
-      stock:stock
+      stock:stock,
+      status:status
     };
     this.products.push(newProduct);
     this.saveFile();
@@ -68,11 +70,14 @@ class ProdcutManager {
 
   getProductById (id) {
     const producto = this.products.find(product => product.id == id);
-    if (producto) 
-      return producto;
-    else 
-      return `Not Found product con id ${id}`;
+    let status = false;
+    let resp = `El producto del id ${id} no existe.`;
+    if (producto) {
+      status = true;
+      resp = producto;
   }
+  return {status, resp}
+}
 
   updateProduct (id, objectUpdate) {
     const index = this.products.findIndex(product => product.id === id);
@@ -82,10 +87,13 @@ class ProdcutManager {
       const {id, ...others} = objectUpdate;
       this.products[index] = {...this.products[index], ...others};
       this.saveFile();
-      message = '¡Producto actualizado!';
-    }; 
-    return message;
-  }
+      message = {
+        message: '¡Producto actualizado!',
+        producto: this.products[index]
+      };
+    }
+  return message;
+}
 
   deleteProduct (id) {
     const index = this.products.findIndex(product => product.id === id);
@@ -100,4 +108,4 @@ class ProdcutManager {
   }
 }
 
-export default ProdcutManager;
+export default ProductManager;
