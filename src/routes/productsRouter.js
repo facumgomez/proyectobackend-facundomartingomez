@@ -1,5 +1,5 @@
-import { Router } from "express";
-import ProductManager from "../dao/productManager.js";
+import { Router } from 'express';
+import ProductManager from '../dao/productManager.js';
 
 const router = Router();
 const products = new ProductManager();
@@ -10,24 +10,23 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:pid', (req, res) => {
-  let {pid=Number(pid)} = req.params;
+  let {pid} = req.params;
   return res.json({product: products.getProductById(pid)});
 });
 
 router.post('/', (req, res) => {
-  let {title, category, description, price, thumbnail, code, stock, status} = req.body;
-  let message = products.addProduct (title, category, thumbnail, description, price, code, stock, status);
+  let message = products.addProduct ({...req.body});
   return res.json({message});
 });
 
 router.put('/:pid', (req, res) => {
-  let {pid=Number(pid)} = req.params;
-  let message = products.updateProduct(pid, req.body);
+  let {pid} = req.params;
+  let message = products.updateProduct(JSON.parse(pid), req.body);
   return res.json({message});
 });
 
 router.delete('/:pid', (req, res) => {
-  let {pid=Number(pid)} = req.params;
+  let {pid} = req.params;
   let message = products.deleteProduct(pid);
   return res.json({message});
 });

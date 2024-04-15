@@ -3,11 +3,15 @@ import fs from 'fs';
 class ProductManager {
   path;
   products;
-  static idProduct = 0;
+  static instance;
 
   constructor () {
+    if(ProductManager.instance)
+      return ProductManager.instance;
     this.path = './src/data/products.json';
     this.products = this.getProductsInFile();
+
+    ProductManager.instance = this;
   }
 
   getProductsInFile() {
@@ -35,30 +39,36 @@ class ProductManager {
       return id;
     }
 
-  addProduct (title, category, thumbnail, description, price, code, stock, status=true) {
-    if (!title ||!category || !thumbnail || !description || !price  || !code || !stock)
-      return `Todos los parametros son requeridos (title, catogory, thumbnail, description, price, code, stock)`;
-
-    const codeRep = this.products.some(product => product.code == code);
-    if (codeRep)
-      return `El codigo ${code} ya se encuentra registrado`;
-
-    ProductManager.idProduct = ProductManager.idProduct + 1;
-    const id = this.appointId();
-    const newProduct = {
-      id:id,
-      title:title,
-      category:category,
-      thumbnail:thumbnail,
-      description:description,
-      price:price,
-      code:code,
-      stock:stock,
-      status:status
-    };
-    this.products.push(newProduct);
-    this.saveFile();
-    return '¡Se agrego exitosamente!';
+  addProduct ({title, category, thumbnail, description, price, code, stock, status=true}) {
+    let message = [];
+    if (!title ||!category || !description || !price  || !code || !stock)
+      message = 'Todos los parametros son requeridos (title, catogory, thumbnail, description, price, code, stock)';
+    else{
+      const codeRep = this.products.some(product => product.code == code);
+      if (codeRep)
+        message = `El codigo ${code} ya se encuentra registrado`;
+      else{
+        const id = this.appointId();
+        const newProduct = {
+          id:id,
+          title:title,
+          category:category,
+          thumbnail:thumbnail,
+          description:description,
+          price:price,
+          code:code,
+          stock:stock,
+          status:status
+          };
+          this.products.push(newProduct);
+          this.saveFile();
+          message = {
+            message: '¡Se agrego exitosamente!',
+            product: newProduct
+          };
+        }
+      }
+    return message;
   }
 
   getProducts (limit = 0) {
@@ -71,13 +81,13 @@ class ProductManager {
   getProductById (id) {
     const producto = this.products.find(product => product.id == id);
     let status = false;
-    let resp = `El producto del id ${id} no existe.`;
+    let message = `El producto del id ${id} no existe.`;
     if (producto) {
       status = true;
-      resp = producto;
+      message = producto;
+    }
+    return {status, message}
   }
-  return {status, resp}
-}
 
   updateProduct (id, objectUpdate) {
     const index = this.products.findIndex(product => product.id === id);
