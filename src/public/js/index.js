@@ -6,7 +6,7 @@ socket.on('product', product => {
   product.forEach(product => {
     let row = tbody.insertRow();
     row.innerHTML = `
-      <td>${product.id}</td>
+      <td>${product._id}</td>
       <td>${product.title}</td>
       <td>${product.category ? product.category : 'No tiene categoria'}</td>
       <td>${product.thumbnail ? product.thumbnail : 'No tiene imagen'}</td>
@@ -30,7 +30,7 @@ form.addEventListener('submit', function(e) {
   let code = document.getElementById('code').value;
   let stock = document.getElementById('stock').value;
 
-  const producto = {
+  const products = {
     title:title,
     category:category,
     description:description,
@@ -38,6 +38,6 @@ form.addEventListener('submit', function(e) {
     code:code,
     stock:stock,
   };
-  socket.emit('addProducts', producto);
+  socket.emit('createProoducts', products);
   form.reset();
 });
