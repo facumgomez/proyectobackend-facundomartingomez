@@ -19,6 +19,9 @@ const cartSchema = new Schema({
     }
   ],
 });
+cartSchema.pre('find', function(){
+  this.populate('products.product');
+});
 
 cartSchema.set('toJSON', {
   transform: function(doc, ret) {

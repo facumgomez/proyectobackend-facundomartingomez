@@ -1,0 +1,35 @@
+<div class="container">
+  <h1>Productos</h1>
+  {{#each docs}}
+    <ul class="d-flex flex-row align-items-center justify-content-center gap-4">
+    <div>
+      <img src="{{this.thumbnail}}" alt="{{this.title}}">
+    </div>
+    <div>
+      <div>
+        <li>Id: {{this._id}}</li>
+        <li>Título: {{this.title}}</li>
+        <li>Categoría: {{this.category}}</li>
+        <li>Descripción: {{this.description}}</li>
+        <li>Precio: ${{this.price}}</li>
+        <li>Código: {{this.code}}</li>
+        <li>Stock: {{this.stock}}</li>
+        <div>
+          <form class="mt-4 d-flex flex-row align-items-center justify-content-center gap-4">
+            <input class="btn btn-primary" type="submit" value="Agregar al carrito">
+          </form>
+        </div>
+      </div>
+    </div>
+  </ul>
+  
+  {{/each}}
+  <div class="d-flex flex-row align-items-center justify-content-center mb-4">
+    {{#if hasPrevPage }}
+      <a href="{{prevLink}}" class="btn btn-primary">Anterior</a>
+    {{/if}}
+    {{#if hasNextPage}}
+      <a href="{{nextLink}}" class="btn btn-primary">Siguiente</a>
+    {{/if}}
+  </div>
+</div>

@@ -1,6 +1,8 @@
-import { Schema, model } from "mongoose";
+import mongoose from 'mongoose';
+import { Schema, model } from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate-v2';
 
-const productCollection = 'product';
+const productCollection = 'products';
 
 const productSchema = new Schema({
   title: {
@@ -38,12 +40,15 @@ const productSchema = new Schema({
   }
 });
 
+
 productSchema.set('toJSON', {
   transform: function(doc, ret) {
     delete ret.__v;
     return ret;
   }
 });
+mongoose.set('strictQuery', false);
+productSchema.plugin(mongoosePaginate);
 const productModel = model(productCollection, productSchema);
 
 export default productModel;

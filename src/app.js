@@ -2,12 +2,13 @@ import express  from 'express';
 import { Server } from 'socket.io';
 import { engine } from 'express-handlebars';
 import productsRouter from './routes/productsRouter.js';
-import cartRouter from './routes/cartRouter.js';
+import cartsRouter from './routes/cartsRouter.js';
 import viewsRouter from './routes/viewsRouter.js';
 import __dirname from './utlis.js';
 import { dbConnection } from './config/config.js';
-import productModel from './dao/models/productsModel.js';
+import productModel from './dao/models/productModel.js';
 import messageModel from './dao/models/messageModel.js';
+import mongoose from 'mongoose';
 
 const app = express();
 const port = 8080;
@@ -15,9 +16,9 @@ const port = 8080;
 app.use(express.json());
 app.use('/', viewsRouter);
 app.use('/api/products', productsRouter);
-app.use('/api/cart', cartRouter);
+app.use('/api/cart', cartsRouter);
 
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
 
 app.engine('handlebars', engine());
@@ -52,3 +53,7 @@ io.on('connection', async (socket) => {
   });
   socket.broadcast.emit('nuevoUser')
 });
+
+const uri = 'mongodb+srv://gomezmfacundo:CRIWaoaOzqqUpo8O@cluster0.mo6ehjs.mongodb.net/ecommerce';
+  mongoose.set('strictQuery', false);
+  mongoose.connect(uri);
