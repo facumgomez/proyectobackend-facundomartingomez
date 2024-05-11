@@ -29,12 +29,11 @@ const getProducts = async (req, res) => {
 
 const getProductById = async (req, res) => {
   try {
-    const {pid} = req.params;
+    const { pid } = req.params;
     const product = await productModel.findById (pid);
     if (!product)
       return res.status(400).json({ status: 'error', message: `Producto no encontrado con id ${pid}` });
-  } catch (error){
-    console.log('getProoducts', error);
+  } catch (error) {
     res.status(200).json({ status: 'error', message:'El documento no tiene un formato válido.' });
   };
 };
@@ -44,14 +43,14 @@ const createProduct = async (req, res) => {
     const newProduct = req.body;
     let products = await productModel.find().lean().exec();
     if (!newProduct.title || !newProduct.category || !newProduct.thumbnail || !newProduct.description || !newProduct.price || !newProduct.code || !newProduct.stock)
-      return res.status(400).json({message: 'Producto no completo'});
+      return res.status(400).json({ status:'error', message: 'Producto incompleto' });
 
     if (products.find(e => e.code === newProduct.code)) 
       return res.status(400).json({ status: "error", message: 'Código no disponible'});
 
-    const product = await productModel.create(newProduct)
+    const product = await productModel.create(newProduct);
     res.status(201).json({ status: "success", message: "Producto creado", product });
-  } catch (error){
+  } catch (error) {
     console.log('createProoducts', error);
     return res.status(400).json({ status: 'error', message:'El documento no tiene un formato válido.' });
   };
@@ -59,16 +58,16 @@ const createProduct = async (req, res) => {
 
 const updateProduct = async (req, res)  => {
   try {
-    const {pid} = req.params;
+    const { pid } = req.params;
     const productUpdate = req.body;
     if (!productUpdate.title || !productUpdate.category || !productUpdate.thumbnail || !productUpdate.description || !productUpdate.price || !productUpdate.code || !productUpdate.stock)
-      return res.status(400).json({ status: 'error',message: 'Producto no completo' });
+      return res.status(400).json({ status: 'error', message: 'Producto no completo' });
     
     const product = await productModel.findByIdAndUpdate({_id: pid}, productUpdate)
       if(product === null)
         return res.status(400).json({ status: 'error', message: `Imposible actualizar producto con id ${pid}` });
       res.status(200).json({ status: "success", message: "Producto actualizado", productUpdate })
-  } catch (error){
+  } catch (error) {
     console.log('updateProduct', error);
     return res.status(400).json({ status: 'error', message:'El documento no tiene un formato válido.' });
   };
@@ -76,12 +75,12 @@ const updateProduct = async (req, res)  => {
 
 const deleteProduct = async (req, res)  => {
   try {
-    const {pid} = req.params;
+    const { pid } = req.params;
     const productDelete = await productModel.findByIdAndDelete(pid);
       if(productDelete)
-        return res.json({ status: 'error', message: 'Producto eliminado', productDelete });
+        return res.status(201).json({ status: 'success', message: 'Producto eliminado', productDelete });
       return res.status(400).json({ status: 'error', message: `Imposible elimanar producto con id ${pid}`});
-  } catch (error){
+  } catch (error) {
     console.log('deleteProduct', error);
     return res.status(400).json({ status: 'error', message:'El documento no tiene un formato válido.' });
   };

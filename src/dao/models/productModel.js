@@ -40,7 +40,6 @@ const productSchema = new Schema({
   }
 });
 
-
 productSchema.set('toJSON', {
   transform: function(doc, ret) {
     delete ret.__v;
