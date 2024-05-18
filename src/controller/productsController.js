@@ -1,6 +1,6 @@
 import productModel from '../dao/models/productModel.js';
 
-const getProducts = async (req, res) => {
+export const getProducts = async (req, res) => {
   try {
     const limit = req.query?.limit || 10;
     const page = req.query?.page || 1;
@@ -27,7 +27,7 @@ const getProducts = async (req, res) => {
   };
 };
 
-const getProductById = async (req, res) => {
+export const getProductById = async (req, res) => {
   try {
     const { pid } = req.params;
     const product = await productModel.findById (pid);
@@ -38,7 +38,7 @@ const getProductById = async (req, res) => {
   };
 };
 
-const createProduct = async (req, res) => {
+export const createProduct = async (req, res) => {
   try {
     const newProduct = req.body;
     let products = await productModel.find().lean().exec();
@@ -56,7 +56,7 @@ const createProduct = async (req, res) => {
   };
 };
 
-const updateProduct = async (req, res)  => {
+export const updateProduct = async (req, res)  => {
   try {
     const { pid } = req.params;
     const productUpdate = req.body;
@@ -73,7 +73,7 @@ const updateProduct = async (req, res)  => {
   };
 };
 
-const deleteProduct = async (req, res)  => {
+export const deleteProduct = async (req, res)  => {
   try {
     const { pid } = req.params;
     const productDelete = await productModel.findByIdAndDelete(pid);
@@ -85,5 +85,3 @@ const deleteProduct = async (req, res)  => {
     return res.status(400).json({ status: 'error', message:'El documento no tiene un formato válido.' });
   };
 };
-
-export { getProducts, getProductById, createProduct, updateProduct, deleteProduct };

@@ -4,6 +4,7 @@ import { engine } from 'express-handlebars';
 import mongoose from 'mongoose';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
+import passport from 'passport';
 import __dirname from './utlis.js';
 import productsRouter from './routes/productsRouter.js';
 import cartsRouter from './routes/cartsRouter.js';
@@ -12,6 +13,7 @@ import viewsProductsRouter from './routes/viewsProductsRouter.js'
 import viewsCartsRouter from './routes/viewsCartsRouter.js'
 import sessionRouter from './routes/sessionRouter.js'
 import { dbConnection } from './config/config.js';
+import initializePassport from './config/passportConfig.js';
 import productModel from './dao/models/productModel.js';
 import messageModel from './dao/models/messageModel.js';
 
@@ -26,6 +28,10 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }));
+
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

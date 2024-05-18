@@ -7,5 +7,5 @@ export const dbConnection = async () => {
   } catch (error) {
     console.log (`Error para levantar la base de datos ${error}`);
     process.exit(1);
-  }
+  };
 }

@@ -1,6 +1,6 @@
 import cartModel from "../dao/models/cartModel.js"
 
-const getCartById = async (req, res) => {
+export const getCartById = async (req, res) => {
   try {
     const { cid } = req.params;
     const cart = await cartModel.findById(cid);
@@ -12,7 +12,7 @@ const getCartById = async (req, res) => {
   };
 };
 
-const createCart = async (req, res) => {
+export const createCart = async (req, res) => {
   try {
     const newCart = await cartModel.create({});
     return res.status(201).json({ status: 'success', message: 'Carrito creado', newCart });
@@ -21,7 +21,7 @@ const createCart = async (req, res) => {
   };
 };
 
-const addProductInCart = async (req, res) => {
+export const addProductInCart = async (req, res) => {
   try {
     const { cid, pid } = req.params;
     const cart = await cartModel.findById(cid);
@@ -43,7 +43,7 @@ const addProductInCart = async (req, res) => {
   };
 };
 
-const deleteCartProduct = async (req, res) => {
+export const deleteCartProduct = async (req, res) => {
   try {
     const { cid, pid } = req.params;
     const cart = await cartModel.findById(cid);
@@ -59,7 +59,7 @@ const deleteCartProduct = async (req, res) => {
   };
 };
 
-const updateCartProducts = async (req, res) => {
+export const updateCartProducts = async (req, res) => {
   try {
     const cid = req.params.cid;
     const cart = await cartModel.findById(cid);
@@ -71,7 +71,7 @@ const updateCartProducts = async (req, res) => {
   };
 };
 
-const updateProductQuantity = async (req, res) => {
+export const updateProductQuantity = async (req, res) => {
   try {
     const { cid, pid } = req.params;
     const cart = await cartModel.findById(cid);
@@ -84,7 +84,7 @@ const updateProductQuantity = async (req, res) => {
   };
 };
 
-const deleteCartProducts = async (req, res) => {
+export const deleteCartProducts = async (req, res) => {
   try {
     const cid = req.params.cid;
     const cart = await cartModel.findById(cid);
@@ -95,6 +95,3 @@ const deleteCartProducts = async (req, res) => {
     return res.status(400).json({ status: "error", message: 'El documento no tiene un formato válido.' });
   };
 };
-
-export { getCartById, createCart, addProductInCart, deleteCartProduct, updateCartProducts, updateProductQuantity, deleteCartProducts };
-
