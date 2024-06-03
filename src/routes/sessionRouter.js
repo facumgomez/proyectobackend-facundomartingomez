@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import passport from 'passport';
-import { isValidPassword } from '../utlis.js';
+import userModel from '../dao/models/userModel.js';
+import { JWT_COOKIE_NAME } from '../config/credentials.js';
 
 const router = Router();
 
@@ -13,7 +14,7 @@ router.post('/api/sessions/register', passport.authenticate('register', {failure
 });
 
 router.get('/failRegister', (req, res) => {
-  res.send({error: 'failRegister'})
+  res.send({error: 'failRegister'});
 });
 
 router.get('/login', (req, res) => {
@@ -24,43 +25,34 @@ router.post('/api/sessions/login', passport.authenticate('login', {failureRedire
   if(!req.user) {
     return res.status(400).send({status: 'error', error: 'Credenciales no válidas'});
   };
-
-  let role = 'usuario';
-  if(req.user.email == 'adminCoder@coder.com' && isValidPassword(req.user, 'adminCod3r123')) {
-    role = 'admin'
-  };
-
-  req.session.user = {
-    first_name: req.user.first_name,
-    last_name: req.user.last_name,
-    email: req.user.email,
-    age: req.user.age,
-    role: role
-  };
-  res.redirect('/products');
+  res.cookie(JWT_COOKIE_NAME, req.user.token).redirect('/products');
 });
 
-router.get('/failLogin', (req, res) =>{
+router.get('/failLogin', (req, res) => {
   res.send({ error: 'Inicio de sesión fallido'});
 });
 
-router.get('/api/sessions/logout', (req, res) =>{
-  req.session.destroy(error => {
-    if(error) {
-      return res.status(500).json({ error: error.message });
-    } else {
-      res.redirect('/login');
-    };
-  });
+router.get('/api/sessions/logout', (req, res) => {
+  res.clearCookie(JWT_COOKIE_NAME).redirect('/login');
 });
 
 router.get('/api/sessions/github', passport.authenticate('github', { scope: ['user: email']}), (req, res) => {});
 
 router.get('/api/sessions/callbackGithub', passport.authenticate('github', { failureRedirect: '/login'}), async (req, res) => {
-  console.log('Callback: ', req.user);
-  req.session.user = {...req.user._doc, role: 'usuario'};
-  console.log('Sesión user: ', req.session.user);
-  res.redirect('/products');
+  res.cookie(JWT_COOKIE_NAME, req.user.token).redirect('/products');
+});
+
+router.get('api/sessions/current', async (req, res) => {
+  try{
+    console.log(req.user);
+    const uid = req.user._id;
+    const user = await userModel.find({_id: uid}).populate('cart');
+    if (!user) 
+      return res.status(400).json({ status: "error", message: 'Ningún usuario inició sesión'});
+    res.status(200).json({user});
+  } catch (error) {
+    res.status(400).json({ status: "error", message: error.message});
+  };
 });
 
 export default router;
