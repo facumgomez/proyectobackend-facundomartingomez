@@ -1,11 +1,11 @@
-import mongoose from "mongoose";
+import dotenv from 'dotenv';
 
-export const dbConnection = async () => {
-  try {
-    await mongoose.connect('mongodb+srv://gomezmfacundo:CRIWaoaOzqqUpo8O@cluster0.mo6ehjs.mongodb.net/ecommerce');
-    console.log ('Base de datos levantada');
-  } catch (error) {
-    console.log (`Error para levantar la base de datos ${error}`);
-    process.exit(1);
-  };
-}
+dotenv.config();
+
+export default {
+  app: {
+    mongoURL: process.env.MONGO_URL,
+    adminEmail: process.env.ADMIN_EMAIL,
+    adminPassword: process.env.ADMIN_PASSWORD
+  }
+};

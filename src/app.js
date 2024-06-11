@@ -12,15 +12,16 @@ import viewsRouter from './routes/viewsRouter.js';
 import viewsProductsRouter from './routes/viewsProductsRouter.js'
 import viewsCartsRouter from './routes/viewsCartsRouter.js'
 import sessionRouter from './routes/sessionRouter.js'
-import { dbConnection } from './config/config.js';
 import initializePassport from './config/passportConfig.js';
 import productModel from './dao/models/productModel.js';
 import messageModel from './dao/models/messageModel.js';
-
+import config from './config/config.js';
 
 const app = express();
 const port = 8080;
-const uri = 'mongodb+srv://gomezmfacundo:CRIWaoaOzqqUpo8O@cluster0.mo6ehjs.mongodb.net/ecommerce';
+const serverExpress = app.listen(port, () => {console.log(`Corriendo aplicacion en el puerto ${port}`)});
+const io = new Server (serverExpress);
+const uri = config.app.mongoURL;
 
 app.use(session({
   secret: 'Cod3r123',
@@ -38,7 +39,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(express.static(__dirname + '/public'));
-app.engine('handlebars', engine());
+app.engine('handlebars', engine({extname: '.handlebars', defaultLayout: 'main.handlebars'}));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'handlebars');
 
@@ -49,12 +50,6 @@ app.use('/products', passportCall('jwt'), viewsProductsRouter);
 app.use('/cart', viewsCartsRouter);
 app.use('/', sessionRouter);
 
-await dbConnection();
-const serverExpress = app.listen(port, () => { 
-  console.log(`Corriendo aplicacion en el puerto ${port}`);
-});
-
-const io = new Server (serverExpress);
 io.on('connection', async (socket) => {
   const product = await productModel.find().lean().exec();
   socket.emit('product', product);

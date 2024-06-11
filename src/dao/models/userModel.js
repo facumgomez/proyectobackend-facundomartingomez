@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose'; 
+import mongoose, { Schema, model } from 'mongoose'; 
 
 const userCollection = 'users';
 const userSchema = new mongoose.Schema({
@@ -17,6 +17,6 @@ const userSchema = new mongoose.Schema({
 });
 
 mongoose.set('strictQuery', false);
-const userModel = mongoose.model(userCollection, userSchema);
+const userModel = model(userCollection, userSchema);
 
 export default userModel;

@@ -1,44 +1,48 @@
-import cartModel from "../dao/models/cartModel.js"
+import CartService from '../services/cartsService.js';
+const cartService = new CartService();
+
+export const getCarts = async (req, res) => {
+  try {
+    const carts = await cartService.getCarts();
+    res.status(201).json({ status: 'success', carts });
+  } catch (error) {
+    res.status(400).json({ status: 'error', message: error.message });
+  };
+};
 
 export const getCartById = async (req, res) => {
   try {
     const { cid } = req.params;
-    const cart = await cartModel.findById(cid);
+    const cart = await cartService.getCartById(cid);
     if(!cart)
-      return res.status(400).json({ status: 'error', message: `Carrito no encontrado con id ${cid}` });
-    return res.status(200).json({cart});
+      return res.status(400).json({ status: 'error', message: `Carrito no encontrado con ID ${cid}` });
+    res.status(201).json(cart);
   } catch (error) {
-    res.status(400).json({ status: 'error', message:'El documento no tiene un formato válido.' });
+    if (error.name === 'ErrorCast') 
+      return res.status(400).json({ status: 'error', message: 'No hay ningún carrito con ese ID' });
+    res.status(400).json({ status: 'error', message: 'El documento no tiene un formato válido.' });
   };
 };
 
 export const createCart = async (req, res) => {
   try {
-    const newCart = await cartModel.create({});
+    const newCart = await cartService.createCart();
     return res.status(201).json({ status: 'success', message: 'Carrito creado', newCart });
   } catch (error) {
-    res.status(400).json({ status:'error', message:'El documento no tiene un formato válido.'});
+    res.status(400).json({ status: 'error', message: 'El documento no tiene un formato válido.' });
   };
 };
 
 export const addProductInCart = async (req, res) => {
   try {
     const { cid, pid } = req.params;
-    const cart = await cartModel.findById(cid);
+    const cart = await cartService.addProductInCart(cid, pid);
     if (!cart)
-      return res.status(400).json({ status: 'error', message: `Carrito no encontrado con id ${cid}` });
-
-    const productInCart = cart.products.find(p => p._id.toString() === pid);
-    if (!productInCart) {
-      cart.products.push({ _id: pid, quantity: 1 });
-      await cart.save(); 
-      return res.status(200).json({ status: 'success', message: 'Carrito actualizado', cart });
-    } else {
-      productInCart.quantity++;
-      await cart.save(); 
-      return res.status(200).json({ status: 'success', message: 'Cantidad actualizada', cart });
-    };
+      return res.status(400).json({ status: 'error', message: `Carrito no encontrado con ID ${cid}` });
+    res.status(201).json({ status: 'success', message: 'El producto ha sido actualizado en el carrito.', cart });
   } catch (error) {
+    if (error.name === 'ErrorCast') 
+      return res.status(400).json({ status: 'error', message: 'No hay ningún carrito con ese ID' });
     res.status(400).json({ status: 'error', message: 'El documento no tiene un formato válido.' });
   };
 };
@@ -46,52 +50,69 @@ export const addProductInCart = async (req, res) => {
 export const deleteCartProduct = async (req, res) => {
   try {
     const { cid, pid } = req.params;
-    const cart = await cartModel.findById(cid);
-    const product = cart.products.find(p => p.product === pid);
-    if (product <= 0) 
-      return res.status(400).json({ status: "error", message: 'Producto no encontrado'});
-    else 
-      cart.products.splice(product, 1);
-      await cart.save();
-      return res.status(200).json({ status: 'success', cart });
-    } catch (error) {
-      res.status (400).json({ status:'error', message:'El documento no tiene un formato válido.' });
+    const cart = await cartService.deleteCartProduct(cid, pid);
+    if (!cart) 
+      return res.status(400).json({ status: 'error', message: 'Producto no encontrado' });
+    res.status(201).json({ status: 'success', message: 'El producto ha sido actualizado en el carrito.', cart });
+  } catch (error) {
+    if (error.name === 'ErrorCast') 
+      return res.status(400).json({ status: 'error', message: 'No hay ningún carrito con ese ID' });
+    res.status (400).json({ status: 'error', message: 'El documento no tiene un formato válido.' });
   };
 };
 
 export const updateCartProducts = async (req, res) => {
   try {
-    const cid = req.params.cid;
-    const cart = await cartModel.findById(cid);
-    cart.products = req.body;
-    await cart.save();
-    res.status(200).json({ status: "success", cart });
+    const { cid }= req.params;
+    const body = req.body;
+    const cart = await cartService.updateCart(cid, body);
+    res.status(201).json({ status: 'success', cart });
   } catch (error) {
-    res.status (400).json({ status: 'error', message:'El documento no tiene un formato válido.' });
+    if (error.name === 'ErrorCast') 
+      return res.status(400).json({ status: 'error', message: 'No hay ningún carrito con ese ID' });
+    res.status (400).json({ status: 'error', message: 'El documento no tiene un formato válido.' });
   };
 };
 
 export const updateProductQuantity = async (req, res) => {
   try {
     const { cid, pid } = req.params;
-    const cart = await cartModel.findById(cid);
-    const product = cart.products.find(p => p.product == pid);
-    product.quantity = req.body.quantity;
-    await cart.save();
-    res.status(200).json({ status: "success", message: 'Producto actualizado', cart });
+    const body = req.body.quantity;
+    const cart = await cartService.updateQuantity(cid, pid, body);
+    if (!cart)
+      return res.status(400).json({ status: 'error', message: 'La cantidad se pudo actualizar' });
+    res.status(201).json({ status: 'success', message: 'Producto actualizado', cart });
   } catch (error) {
-    res.status(400).json({ status: "error", message: 'El documento no tiene un formato válido.' });
+    if (error.name === 'ErrorCast') 
+      return res.status(400).json({ status: 'error', message: 'No hay ningún carrito con ese ID' });
+    res.status(400).json({ status: 'error', message: 'El documento no tiene un formato válido.' });
   };
 };
 
 export const deleteCartProducts = async (req, res) => {
   try {
-    const cid = req.params.cid;
-    const cart = await cartModel.findById(cid);
-    cart.products = [];
-    await cart.save();
-    res.status(200).json({ status: "success", message: 'Productos eliminados', cart });
+    const { cid } = req.params;
+    const cart = await cartService.clearCart(cid);
+    if (!cart) 
+      return res.status(400).json({ status: 'error', message: 'Carrito no encontrado' });
+    res.status(201).json({ status: 'success', message: 'Productos eliminados', cart });
   } catch (error) {
-    return res.status(400).json({ status: "error", message: 'El documento no tiene un formato válido.' });
+    if (error.name === 'ErrorCast') 
+      return res.status(400).json({ status: 'error', message: 'No hay ningún carrito con ese ID' });
+    res.status(400).json({ status: 'error', message: 'El documento no tiene un formato válido.' });
+  };
+};
+
+export const deleteCart = async (req, res) => {
+  try {
+    const { cid } = req.params;
+    const cart = await cartService.deleteCart(cid);
+    if (!cart) 
+      return res.status(400).json({ status: 'error', message: 'Carrito no encontrado' });
+    res.status(201).json({ status: 'success', message: 'Carrito eliminado', cart });
+  } catch (error) {
+    if (error.name === 'ErrorCast') 
+      return res.status(400).json({ status: 'error', message: 'No hay ningún carrito con ese ID' });
+    res.status(400).json({ status: 'error', message: 'El documento no tiene un formato válido.' });
   };
 };

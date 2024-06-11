@@ -8,7 +8,7 @@ const cartSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'products',
         required: true
-        },
+      },
       quantity: {
         type: Number,
         required: true
@@ -18,9 +18,10 @@ const cartSchema = new Schema({
     _id: false
   }
 });
+
 mongoose.set('strictQuery', false);
 cartSchema.pre('find', function() {
-  this.populate('products.id');
+  this.populate('products.product');
 });
 
 cartSchema.set('toJSON', {

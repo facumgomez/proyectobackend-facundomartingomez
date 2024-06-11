@@ -6,6 +6,7 @@ import cartModel from '../dao/models/cartModel.js';
 import { createPassword, isValidPassword, generateToken, extractCookie } from '../utlis.js';
 import passport_jwt from 'passport-jwt';
 import { JWT_PRIVATE_KEY } from './credentials.js';
+import config  from './config.js';
 
 const LocalStrategy = local.Strategy;
 const JWTStrategy = passport_jwt.Strategy;
@@ -32,13 +33,13 @@ const initializePassport = () => {
         password: createPassword(password),
         cart: newCart._id
       };
-      if(newUser.email == 'adminCoder@coder.com' && isValidPassword(newUser, 'adminCod3r123')){
+      if(newUser.email == config.app.adminEmail && isValidPassword(newUser, config.adminPassword)) {
         newUser.role = 'admin';
       };
       const result = await userModel.create(newUser);
       return done(null, result);
     } catch(error) {
-      return done(error)
+      return done(error);
     };
   }));
 
@@ -57,7 +58,7 @@ const initializePassport = () => {
       user.token = token;
       return done(null, user);
     } catch (error) {
-
+      return done(error);
     };
   }));
 
@@ -67,7 +68,7 @@ const initializePassport = () => {
     callbackURL: 'http://localhost:8080/api/sessions/callbackGithub'
   }, async (tokenAccess, tokenRefresh, profile, done) => {
     try {
-      const user = await userModel.findOne({ email: profile._json.email});
+      const user = await userModel.findOne({email: profile._json.email});
       if(user) {
         const token = generateToken(user);
         user.token = token;

@@ -1,9 +1,9 @@
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken'
-import { JWT_COOKIE_NAME, JWT_PRIVATE_KEY } from './config/credentials.js'
-import passport from 'passport'
+import jwt from 'jsonwebtoken';
+import { JWT_COOKIE_NAME, JWT_PRIVATE_KEY } from './config/credentials.js';
+import passport from 'passport';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -32,7 +32,7 @@ export const passportCall = (strategy) => {
     if(err) 
       return next(err);
     if(!user) 
-      return res.status(401).render('errors/base', { error: info.messages? info.messages : info.toString()});
+      return res.status(401).render('error', { error: info.messages? info.messages : info.toString()});
     req.user = user;
     next();
     })(req, res, next);
