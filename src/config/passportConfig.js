@@ -33,7 +33,7 @@ const initializePassport = () => {
         password: createPassword(password),
         cart: newCart._id
       };
-      if(newUser.email == config.app.adminEmail && isValidPassword(newUser, config.adminPassword)) {
+      if(newUser.email == config.adminEmail && isValidPassword(newUser, config.adminPassword)) {
         newUser.role = 'admin';
       };
       const result = await userModel.create(newUser);

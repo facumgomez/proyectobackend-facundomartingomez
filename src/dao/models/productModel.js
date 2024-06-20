@@ -1,5 +1,4 @@
-import mongoose from 'mongoose';
-import { Schema, model } from 'mongoose';
+import mongoose, { Schema, model } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 
 const productCollection = 'products';
@@ -8,7 +7,7 @@ const productSchema = new Schema({
     type:String, 
     required:[true, 'El titulo del producto es requerdio']
   },
-  category:{
+  category: {
     type:String, 
     required:[true, 'La categoria del producto es requerdio']
   },
@@ -16,24 +15,24 @@ const productSchema = new Schema({
     type:String, 
     required: [true, 'La imagen del producto es requerdio']
   },
-  description:{
+  description: {
     type:String, 
     required:[true, 'La descripcion del producto es requerdio']
   },
-  price:{
+  price: {
     type:Number, 
     required:[true, 'El precio del producto es requerdio']
   },
-  code:{
+  code: {
     type:String, 
     required:[true, 'El codigo del producto es requerdio'], 
     unique: true
   },
-  stock:{
+  stock: {
     type:Number, 
     required:[true, 'El stock del producto es requerdio']
   }, 
-  status:{
+  status: {
     type: Boolean, 
     default: true
   }

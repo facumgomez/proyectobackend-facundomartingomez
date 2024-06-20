@@ -1,12 +1,10 @@
-import ProductsMemoryDao from '../dao/productsMemoryDao.js';
-
-export default class ProductsService {
-  constructor() {
-    this.productsMemoryDao = new ProductsMemoryDao();
+export default class ProductsRepository {
+  constructor(dao) {
+    this.dao = dao;
   };
 
   getProducts = async () => {
-    return await this.productsMemoryDao.getAll();
+    return await this.dao.getAll();
   };
 
   getProductsPaginate = async (query, page, limit, sort, controllerType) => {
@@ -18,30 +16,27 @@ export default class ProductsService {
     if(controllerType == 'api') type = 'api/products';
     if(controllerType == 'view') type = 'products';
 
-    let products = await this.productsMemoryDao.getAll(query, page, limit, sort, sortBy);
+    let products = await this.dao.getAll(query, page, limit, sort, sortBy);
     products.prevLink = products.hasPrevPage ? `http://localhost:8080/${type}?page=${products.prevPage}&limit=${limit}&sort=${sort}` : '';
     products.nextLink = products.hasNextPage ? `http://localhost:8080/${type}?page=${products.nextPage}&limit=${limit}&sort=${sort}` : '';
     return products
   };
 
   getProductById = async (pid) => {
-    return await this.productsMemoryDao.getById(pid);
+    return await this.dao.getById(pid);
   };
 
   createProduct = async (newProduct) => {
-    let products = await this.productsMemoryDao.getAll();
-    if (products.find(e => e.code === newProduct.code)) 
-      return null;
-    let product = await this.productsMemoryDao.create(newProduct);
-      return product;
+    let product = await this.dao.create(newProduct);
+    return product;
   };
 
-  updateProduct = async (pid, productToUpdate) => {
-    const product = await this.productsMemoryDao.update(pid, productToUpdate);
+  updateProduct = async (pid, productUpdate) => {
+    const product = await this.dao.update(pid, productUpdate);
     return product;
   };
 
   deleteProduct = async (pid) => {
-    return await this.productsMemoryDao.delete(pid);
+    return await this.dao.delete(pid);
   };
 }

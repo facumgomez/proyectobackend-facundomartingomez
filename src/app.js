@@ -21,7 +21,7 @@ const app = express();
 const port = 8080;
 const serverExpress = app.listen(port, () => {console.log(`Corriendo aplicacion en el puerto ${port}`)});
 const io = new Server (serverExpress);
-const uri = config.app.mongoURL;
+const uri = config.mongoURL;
 
 app.use(session({
   secret: 'Cod3r123',

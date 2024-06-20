@@ -1,5 +1,4 @@
-import ProductService from '../../services/productsService.js';
-const productService = new ProductService();
+import { productService } from '../../services/repository.js';
 
 export const getProductsViews = async (req, res) => {
   try {
@@ -23,4 +22,4 @@ export const getProductsViews = async (req, res) => {
   } catch (error) {
     res.render('error', { error: 'No se pudo cargar los productos debido a un error.'});
   };
-}
+};

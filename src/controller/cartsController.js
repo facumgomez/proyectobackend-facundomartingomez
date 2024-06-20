@@ -1,5 +1,4 @@
-import CartService from '../services/cartsService.js';
-const cartService = new CartService();
+import { cartService } from '../services/repository.js';
 
 export const getCarts = async (req, res) => {
   try {
@@ -110,6 +109,21 @@ export const deleteCart = async (req, res) => {
     if (!cart) 
       return res.status(400).json({ status: 'error', message: 'Carrito no encontrado' });
     res.status(201).json({ status: 'success', message: 'Carrito eliminado', cart });
+  } catch (error) {
+    if (error.name === 'ErrorCast') 
+      return res.status(400).json({ status: 'error', message: 'No hay ningún carrito con ese ID' });
+    res.status(400).json({ status: 'error', message: 'El documento no tiene un formato válido.' });
+  };
+};
+
+export const purchaseCart = async (req, res) => {
+  try {
+    const { cid } = req.params;
+    const user = req.user;
+    const ticket = await cartService.purchaseComplete(cid, user.first_name);
+    if (!ticket)  
+      return res.json({ status: 'error', message: 'No se pudo completar la compra' });
+    return res.json({ticket});
   } catch (error) {
     if (error.name === 'ErrorCast') 
       return res.status(400).json({ status: 'error', message: 'No hay ningún carrito con ese ID' });
