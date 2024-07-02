@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import passport from 'passport';
 import { closeSession, createLogin, createLoginGitHub, createSession, failLoginViews, failRegisterViews, getCurrentSession, getRegisterViews, loginViews } from '../controller/sessionController.js';
-import { isAdmin } from '../middleware/auth.js';
+import { isAdmin } from '../middlewares/auth.js';
 
 const router = Router();
 

@@ -9,9 +9,10 @@ import __dirname, { passportCall } from './utlis.js';
 import productsRouter from './routes/productsRouter.js';
 import cartsRouter from './routes/cartsRouter.js';
 import viewsRouter from './routes/viewsRouter.js';
-import viewsProductsRouter from './routes/viewsProductsRouter.js'
-import viewsCartsRouter from './routes/viewsCartsRouter.js'
-import sessionRouter from './routes/sessionRouter.js'
+import viewsProductsRouter from './routes/viewsProductsRouter.js';
+import viewsCartsRouter from './routes/viewsCartsRouter.js';
+import sessionRouter from './routes/sessionRouter.js';
+import mockingRouter from './routes/mockingRouter.js';
 import initializePassport from './config/passportConfig.js';
 import productModel from './dao/models/productModel.js';
 import messageModel from './dao/models/messageModel.js';
@@ -21,7 +22,7 @@ const app = express();
 const port = 8080;
 const serverExpress = app.listen(port, () => {console.log(`Corriendo aplicacion en el puerto ${port}`)});
 const io = new Server (serverExpress);
-const uri = config.mongoURL;
+const uri = config.MONGO_URL;
 
 app.use(session({
   secret: 'Cod3r123',
@@ -49,6 +50,7 @@ app.use('/api/cart', cartsRouter);
 app.use('/products', passportCall('jwt'), viewsProductsRouter);
 app.use('/cart', viewsCartsRouter);
 app.use('/', sessionRouter);
+app.use('/mockingproducts', mockingRouter)
 
 io.on('connection', async (socket) => {
   const product = await productModel.find().lean().exec();

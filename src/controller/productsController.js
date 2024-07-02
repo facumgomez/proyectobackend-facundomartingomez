@@ -1,4 +1,5 @@
 import { productService } from '../services/repository.js';
+import errorHandler from '../middlewares/error.js'
 
 export const getProducts = async (req, res) => {
   try {
@@ -38,11 +39,9 @@ export const createProduct = async (req, res) => {
   try {
     const newProduct = req.body;
     const productAdd = await productService.createProduct(newProduct);
-    if(productAdd.status == null)
-      return res.status(400).json({ status: 'error', message: 'Ya existe un producto con ese código' });
-    res.status(201).json({ status: 'success', message: 'Producto creado', product });
+    res.status(201).json({ status: 'success', message: 'Producto creado', productAdd });
   } catch (error) {
-    res.status(400).json({ status: 'error', message: 'El documento no tiene un formato válido.' });
+    errorHandler(error, res)
   };
 };
 

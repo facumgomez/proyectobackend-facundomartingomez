@@ -6,7 +6,7 @@ import cartModel from '../dao/models/cartModel.js';
 import { createPassword, isValidPassword, generateToken, extractCookie } from '../utlis.js';
 import passport_jwt from 'passport-jwt';
 import { JWT_PRIVATE_KEY } from './credentials.js';
-import config  from './config.js';
+import config from './config.js';
 
 const LocalStrategy = local.Strategy;
 const JWTStrategy = passport_jwt.Strategy;

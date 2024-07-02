@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { JWT_COOKIE_NAME, JWT_PRIVATE_KEY } from './config/credentials.js';
 import passport from 'passport';
+import { fakerES as faker } from '@faker-js/faker';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -36,5 +37,19 @@ export const passportCall = (strategy) => {
     req.user = user;
     next();
     })(req, res, next);
+  };
+};
+
+export const generateProducts = () => {
+  return {
+    id: faker.database.mongodbObjectId(),
+    title: faker.commerce.productName(),
+    category: faker.commerce.productMaterial(),
+    thumbnail: faker.image.url(),
+    description: faker.commerce.productDescription(),
+    price: faker.commerce.price(),
+    code: faker.string.alphanumeric(6),
+    stock: faker.string.numeric(2),
+    status: faker.datatype.boolean()
   };
 };
