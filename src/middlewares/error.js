@@ -1,6 +1,6 @@
 export default function errorHandler(error, res) {
-  console.log(error.message);
+  logger.error(error.message);
   if (error.cause)
-    console.log(error.cause);
+    logger.error(error.cause);
   return res.status(400).json({ status: 'error', error: error.name });
 }
