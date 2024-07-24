@@ -13,6 +13,9 @@ export const getProductsViews = async (req, res) => {
     let products = await productService.getProductsPaginate(query, page, limit, sort, controllerType);
 
     const user = req.user.user;
+    if(user.role == 'user') {
+      user.flag = true;
+    };
 
     if (products.totalDocs === 0) {
       res.render('error', { error: 'No se encontraron productos' });

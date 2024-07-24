@@ -38,6 +38,9 @@ export const getProductById = async (req, res) => {
 export const createProduct = async (req, res) => {
   try {
     const newProduct = req.body;
+    if(req.user) { 
+      newProduct.owner = req.user._id 
+    };
     const productAdd = await productService.createProduct(newProduct);
     res.status(201).json({ status: 'success', message: 'Producto creado', productAdd });
   } catch (error) {
@@ -63,10 +66,22 @@ export const updateProduct = async (req, res)  => {
 export const deleteProduct = async (req, res)  => {
   try {
     const { pid } = req.params;
+    const user = req.user;
+    if(user.role == 'premium') {
+      let product = await productService.getProductById(pid);
+      if(product.owner != user._id) {
+        return res.status(400).json({ status: 'error', message: 'No puedes eliminar este producto porque no eres el dueño.'});
+      };
+      const productDeleted = await productService.deleteProduct(pid);
+      if(productDeleted.deletedCount === 0)  
+        return res.status(400).json({ status: 'error', message: 'Producto no encontrado'});
+      return res.status(200).json({ status: 'success', massage: 'Producto eliminado', productDeleted });
+    };
+
     const productDelete = await productService.deleteProduct(pid);
-      if(productDelete.deleteCount === 0)
-        return res.status(400).json({ status: 'error', message: `Imposible elimanar producto con id ${pid}`});
-      res.status(201).json({ status: 'success', message: 'Producto eliminado', productDelete });
+    if(productDelete.deleteCount === 0)
+      return res.status(400).json({ status: 'error', message: `Imposible elimanar producto con id ${pid}`});
+    res.status(201).json({ status: 'success', message: 'Producto eliminado', productDelete });
   } catch (error) {
     if (error.name === 'ErrorCast') 
       return res.status(400).json({ status: 'error', message: 'No hay ningún producto con ese ID' });

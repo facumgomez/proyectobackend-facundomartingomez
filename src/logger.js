@@ -36,7 +36,7 @@ const createLogger = (env) => {
         })
       ]
     });
-  } else{
+  } else {
     return winston.createLogger({
       levels: customLevels.levels,
       transports: [

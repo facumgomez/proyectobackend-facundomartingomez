@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import logger from '../logger.js';
 
-const router = Router()
+const router = Router();
 
 router.get('/', async (req, res) => {
   try {

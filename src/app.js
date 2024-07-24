@@ -12,6 +12,7 @@ import viewsRouter from './routes/viewsRouter.js';
 import viewsProductsRouter from './routes/viewsProductsRouter.js';
 import viewsCartsRouter from './routes/viewsCartsRouter.js';
 import sessionRouter from './routes/sessionRouter.js';
+import usersRouter from './routes/usersRouter.js';
 import mockingRouter from './routes/mockingRouter.js';
 import initializePassport from './config/passportConfig.js';
 import loggerRouter from './routes/loggerRouter.js';
@@ -52,6 +53,7 @@ app.use('/api/cart', cartsRouter);
 app.use('/products', passportCall('jwt'), viewsProductsRouter);
 app.use('/cart', viewsCartsRouter);
 app.use('/', sessionRouter);
+app.use('/api/users', usersRouter);
 app.use('/mockingproducts', mockingRouter);
 app.use('/loggerTest', loggerRouter);
 

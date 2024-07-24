@@ -1,6 +1,9 @@
 import { JWT_COOKIE_NAME } from '../config/credentials.js';
 import userModel from '../dao/models/userModel.js';
 import UserDTO from '../dao/dto/userDTO.js';
+import { userService } from '../services/repository.js';
+import logger from '../logger.js';
+import { createPassword, isValidPassword } from '../utlis.js';
 
 export const getRegisterViews = (req, res) => {
   res.render('register');
@@ -15,7 +18,7 @@ export const failRegisterViews = (req, res) => {
 };
 
 export const loginViews = (req, res) => {
-  res.render('login');
+  res.render('sessions/login');
 };
 
 export const createLogin = async (req, res) => {
@@ -47,5 +50,63 @@ export const getCurrentSession = async (req, res) => {
     res.status(200).json({user});
   } catch (error) {
     res.status(400).json({ status: 'error', message: error.message });
+  };
+};
+
+export const changePasswordViews = (req, res) => {
+  res.render('sessions/changePassword');
+};
+
+export const changePassword = async (req, res) =>{
+  try {
+    const email = req.body.email;
+    let user = await userModel.findOne({email: email});
+    if (!user) return res.status(401).render('error', {
+      error: 'No existe ningún usuario con ese email.'   
+    });
+
+    let subject = 'Cambio de contraseña.'
+    let web = `<h1>Ha solicitado un restablecimiento de su contraseña, haga click en el botón para continuar.</h1><br><a href="http://localhost:8080/setPassword"><button>Restablecer contraseña</button></a>`;
+    const result = await userService.sendMail(email, subject, web);
+    logger.info(JSON.stringify(result));
+    res.redirect('/login')
+  } catch (error) {
+    logger.error(error);
+  };
+};
+
+export const setNewPasswordViews = async (req, res) => {
+  try {
+    res.render('sessions/setNewPassword');
+  } catch (error) {
+    logger.error(error);
+  }
+}
+
+export const setNewPassword = async (req, res) => {
+  try {
+    const email = req.body.email;
+    const newPassword = req.body.password;
+    let user = await userModel.findOne({email: email});
+
+    if(!user) return res.status(401).render('error', { error: 'No existe ningún usuario con ese email.' });
+    if(isValidPassword(user, newPassword)) 
+      return res.status(401).render('error', { error: 'No se puede cambiar la contraseña, es igual a la anterior.' });
+    console.log(user);
+
+    user.password = createPassword(newPassword);
+    await userModel.findOneAndUpdate({ _id: user._id }, user);
+    console.log(user);
+    res.redirect('/passwordChanged');
+  } catch (error) {
+    console.log(error);
+  };
+};
+
+export const passwordChangedViews = async (req, res) => {
+  try {
+    res.render('sessions/passwordChanged');
+  } catch (error) {
+    console.log(error);
   };
 };
