@@ -20,6 +20,8 @@ import productModel from './dao/models/productModel.js';
 import messageModel from './dao/models/messageModel.js';
 import config from './config/config.js';
 import logger from './logger.js';
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUiExpress from 'swagger-ui-express';
 
 const app = express();
 const port = 8080;
@@ -79,6 +81,20 @@ io.on('connection', async (socket) => {
   });
   socket.broadcast.emit('nuevoUser');
 });
+
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.1',
+    info: {
+      title: 'Documentación API',
+      description: 'API Ecommerce'
+    }
+  },
+  apis:[`./src/docs/*.yaml`]
+};
+
+const specs = swaggerJsdoc(swaggerOptions);
+app.use('/api/docs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
 mongoose.set('strictQuery', false);
 mongoose.connect(uri);

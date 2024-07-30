@@ -1,0 +1,213 @@
+paths:
+  /api/products:
+    get:
+      summary: Obtiene todos los productos
+      tags: 
+        - Products
+      responses:
+        200:
+          description: Muestra lista de productos 
+          content: 
+            application/json:
+              schema: 
+                type: array
+                items:
+                  $ref: '#components/schemas/Products'
+        404: 
+          description: Error en el pedido al servidor    
+    post:
+      summary: Crea un producto a partir del body enviado
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/Product'      
+      responses:
+        200:
+          description: Muestra el producto creado
+        404: 
+          description: Error en el pedido al servidor
+
+  /api/products/{pid}:
+    get:
+      summary: Obtiene un producto específico 
+      tags: 
+        - Products
+      parameters:
+      - name: pid
+        in: path
+        required: true
+        description: ID del producto que desea solicitar 
+        schema:
+          $type: string
+      responses:
+        200:
+          description: Muestra el producto cuyo id se haya pasado por params
+          content: 
+            application/json:
+              schema: 
+                type: array
+                items:
+                  $ref: '#components/schemas/Product'
+        404: 
+          description: Error en el pedido al servidor   
+    put:
+      summary: Actualiza un producto a partir de su id
+      tags: 
+        - Products
+      parameters: 
+      - name: pid
+        in: path
+        required: true
+        description: ID del producto que desea solicitar      
+        schema: 
+          $type: String 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/updateProduct'  
+      responses:
+        200:
+          description: Muestra el producto luego de ser actualizado
+          content: 
+            application/json:
+              type: object
+              schema: 
+                properties: 
+                  status:
+                    type: String
+                    example: success
+                  massage: 
+                    type: String 
+                    example: Product update
+                  productUpdated:   
+                    type: object 
+                    example:
+                      $ref: '#components/requestBodies/updateProduct/example'         
+        404: 
+          description: Error en el pedido al servidor     
+    delete: 
+      summary: Elimina un producto a partir de su id
+      tags: 
+        - Products
+      parameters:
+      - name: pid
+        in: path
+        required: true
+        description: ID del producto que desea solicitar 
+        schema:
+          $type: string        
+      responses:
+        200:
+          description: Mensaje de que el producto se ha eliminado con éxito  
+        404: 
+          description: Error en el pedido al servidor  
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerado de mongo
+        title: 
+          type: String
+          description: Nombre del producto
+        category: 
+          type: String
+          description: Categoria del producto
+        thumbnail: 
+          type: String
+          description: URL de la imagen del producto
+        description: 
+          type: String
+          description: Descripción del producto
+        price: 
+          type: Number
+          description: Precio del producto
+        code: 
+          type: String
+          description: Código del producto
+        stock: 
+          type: Number
+          description: Cantidad de stock del producto
+        status: 
+          type: Boolean
+          description: Estado del producto
+        owner: 
+          type: String
+          description: Nombre del creador del producto (Por default en "admin")
+      example:
+        _id: 641f930dec14bb9f84b578a5
+        title: iPad 10.2" Wi-Fi + Cellular 256GB (9na Gen) - Silver
+        category: iPad
+        thumbnail: https://ibb.co/W6FK2kd
+        description: Poderoso. Fácil de usar. Versátil. El nuevo iPad tiene una hermosa pantalla Retina de 10,2 pulgadas, un potente chip A13 Bionic, una cámara frontal ultraancha con Center Stage y funciona con Apple Pencil y Smart Keyboard.¹ El iPad te permite hacer más, más fácilmente. Todo por un valor increíble.
+        price: $1444499
+        code: code05
+        stock: 10
+        status: true
+        owner: admin
+    Products:
+      type: object
+      properties:
+        status: 
+          type: String
+          description: Texto que confirma que la petición tuvo éxito
+        products: 
+          type: object
+          description: Objeto que contiene el array "docs" con los productos, y la información de la página de productos que se muestra (El limit, total de páginas, contador de páginas, etc)
+      example: 
+        status: success
+        products: { 
+          docs: [],
+          totalDocs: 0,
+          limit: 10,
+          totalPages: 1,
+          page: 1,
+          pagingCounter: 1,
+          hasPrevPage: false,
+          hasNextPage: true,
+          prevPage: null,
+          nextPage: null,
+          prevLink: "",
+          nextLink: "" 
+        }
+  requestBodies:
+    updateProduct:
+      type: object   
+      properties: 
+        title: 
+          type: String
+          description: Nombre del producto
+        category: 
+          type: String
+          description: Categoria del producto
+        thumbnail: 
+          type: String
+          description: URL de la imagen del producto
+        description: 
+          type: String
+          description: Descripción del producto
+        price: 
+          type: Number
+          description: Precio del producto
+        stock: 
+          type: Number
+          description: Cantidad de stock del producto
+        status: 
+          type: Boolean
+          description: Estado del producto
+      example: 
+        title: iPad Pro 11" Chip M1 Wi-Fi + Cellular 128GB (3era Gen) Space Gray
+        category: iPad
+        thumbnail: https://ibb.co/tscVWzP
+        description:
+        price:
+        stock: 10

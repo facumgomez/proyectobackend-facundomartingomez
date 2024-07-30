@@ -4,7 +4,7 @@ import { isAdmin, isPremium } from '../middlewares/auth.js';
 
 const router = Router();
 
-router.get('/', isPremium, getProducts);
+router.get('/', getProducts);
 router.get('/:pid', getProductById);
 router.post('/', isAdmin, isPremium, createProduct);
 router.put('/:pid', isAdmin, updateProduct);
