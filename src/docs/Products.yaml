@@ -13,7 +13,7 @@ paths:
                 type: array
                 items:
                   $ref: '#components/schemas/Products'
-        404: 
+        400: 
           description: Error en el pedido al servidor    
     post:
       summary: Crea un producto a partir del body enviado
@@ -28,7 +28,7 @@ paths:
       responses:
         200:
           description: Muestra el producto creado
-        404: 
+        400: 
           description: Error en el pedido al servidor
 
   /api/products/{pid}:
@@ -52,7 +52,7 @@ paths:
                 type: array
                 items:
                   $ref: '#components/schemas/Product'
-        404: 
+        400: 
           description: Error en el pedido al servidor   
     put:
       summary: Actualiza un producto a partir de su id
@@ -89,7 +89,7 @@ paths:
                     type: object 
                     example:
                       $ref: '#components/requestBodies/updateProduct/example'         
-        404: 
+        400: 
           description: Error en el pedido al servidor     
     delete: 
       summary: Elimina un producto a partir de su id
@@ -105,7 +105,7 @@ paths:
       responses:
         200:
           description: Mensaje de que el producto se ha eliminado con éxito  
-        404: 
+        400: 
           description: Error en el pedido al servidor  
 
 components:
@@ -149,7 +149,7 @@ components:
         category: iPad
         thumbnail: https://ibb.co/W6FK2kd
         description: Poderoso. Fácil de usar. Versátil. El nuevo iPad tiene una hermosa pantalla Retina de 10,2 pulgadas, un potente chip A13 Bionic, una cámara frontal ultraancha con Center Stage y funciona con Apple Pencil y Smart Keyboard.¹ El iPad te permite hacer más, más fácilmente. Todo por un valor increíble.
-        price: $1444499
+        price: 1444499
         code: code05
         stock: 10
         status: true
@@ -208,6 +208,6 @@ components:
         title: iPad Pro 11" Chip M1 Wi-Fi + Cellular 128GB (3era Gen) Space Gray
         category: iPad
         thumbnail: https://ibb.co/tscVWzP
-        description:
-        price:
+        description: El iPad en su máxima expresión. Un rendimiento fuera de serie con el chip M1, una espectacular pantalla XDR y conexión inalámbrica ultrarrápida. El iPad Pro está listo para todo.
+        price: 2159900
         stock: 10

@@ -28,7 +28,7 @@ export const createLogin = async (req, res) => {
 };
 
 export const failLoginViews = (req, res) => {
-  res.status(401).render('error', { error: 'Acceso fallido. Las credenciales no son válidas' });
+  res.status(400).render('error', { error: 'Acceso fallido. Las credenciales no son válidas' });
 };
 
 export const closeSession = (req, res) => {
@@ -61,7 +61,7 @@ export const changePassword = async (req, res) =>{
   try {
     const email = req.body.email;
     let user = await userModel.findOne({email: email});
-    if (!user) return res.status(401).render('error', {
+    if (!user) return res.status(400).render('error', {
       error: 'No existe ningún usuario con ese email.'   
     });
 
@@ -89,9 +89,9 @@ export const setNewPassword = async (req, res) => {
     const newPassword = req.body.password;
     let user = await userModel.findOne({email: email});
 
-    if(!user) return res.status(401).render('error', { error: 'No existe ningún usuario con ese email.' });
+    if(!user) return res.status(400).render('error', { error: 'No existe ningún usuario con ese email.' });
     if(isValidPassword(user, newPassword)) 
-      return res.status(401).render('error', { error: 'No se puede cambiar la contraseña, es igual a la anterior.' });
+      return res.status(400).render('error', { error: 'No se puede cambiar la contraseña, es igual a la anterior.' });
     console.log(user);
 
     user.password = createPassword(newPassword);

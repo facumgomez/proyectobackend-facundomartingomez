@@ -84,7 +84,7 @@ io.on('connection', async (socket) => {
 
 const swaggerOptions = {
   definition: {
-    openapi: '3.0.1',
+    openapi: '3.0.0',
     info: {
       title: 'Documentación API',
       description: 'API Ecommerce'

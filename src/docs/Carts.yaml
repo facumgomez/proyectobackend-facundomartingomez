@@ -14,7 +14,7 @@ paths:
                 type: array
                 items:
                   $ref: '#components/schemas/Carts'                              
-        404: 
+        400: 
           description: Error en el pedido al servidor
     post:     
       summary: Crea un carrito
@@ -37,7 +37,7 @@ paths:
                     type: object
                     example:
                       $ref: '#components/schemas/Cart/example'          
-        404: 
+        400: 
           description: Error en el pedido al servidor  
 
   /api/carts/{cid}:  
@@ -61,7 +61,7 @@ paths:
                 type: array
                 items:
                   $ref: '#components/schemas/Cart'
-        404: 
+        400: 
           description: Error en el pedido al servidor  
     put:           
       summary: Actualiza los productos de un carrito a partir de su id
@@ -83,7 +83,7 @@ paths:
       responses:
         200:
           description: Muestra el carrito luego de ser actualizado
-        404: 
+        400: 
           description: Error en el pedido al servidor  
     delete:
       summary: Elimina todos los productos de el carrito a partir de su id
@@ -104,7 +104,7 @@ paths:
               schema: 
                 items:
                   $ref: '#components/schemas/DeletedCart'
-        404: 
+        400: 
           description: Error en el pedido al servidor  
 
   /api/carts/{cid}/product/{pid}:
@@ -128,7 +128,7 @@ paths:
       responses:
         200:
           description: Mensaje de que el producto se actualizo con éxito
-        404: 
+        400: 
           description: Error en el pedido al servidor                
 
   /api/carts/{cid}/products/{pid}:
@@ -158,7 +158,7 @@ paths:
       responses:
         200:
           description: Muestra el carrito luego de ser actualizado
-        404: 
+        400: 
           description: Error en el pedido al servidor  
     delete:
       summary: Elimina un producto específico obetenido por params de un carrito a partir de su id
@@ -180,7 +180,7 @@ paths:
       responses:
         200:
           description: Mensaje de que el producto se eliminó con éxito
-        404: 
+        400: 
           description: Error en el pedido al servidor
 
   /api/carts/cart/{cid}:
@@ -198,7 +198,7 @@ paths:
       responses:
         200:
           description: Mensaje de que el carrito se eliminó con éxito
-        404: 
+        400: 
           description: Error en el pedido al servidor    
 
 components:

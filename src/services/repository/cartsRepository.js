@@ -7,7 +7,7 @@ export default class cartsRepository {
   };
 
   getCarts = async () => {
-    return await this.getAll();
+    return await this.dao.getAll();
   };
 
   getCartById = async (cid) => {

@@ -14,7 +14,7 @@ router.get('/failLogin', failLoginViews);
 router.get('/api/sessions/logout', closeSession);
 router.get('/api/sessions/github', passport.authenticate('github', {scope: ['user: email']}), (req, res) => {});
 router.get('/api/sessions/callbackGithub', passport.authenticate('github', {failureRedirect: '/login'}), createLoginGitHub);
-router.get('api/sessions/current', isAdmin, getCurrentSession);
+router.get('/api/sessions/current', isAdmin, getCurrentSession);
 router.get('/changePassword', changePasswordViews);
 router.post('/api/sessions/changePassword', changePassword);
 router.get('/setPassword', setNewPasswordViews);
