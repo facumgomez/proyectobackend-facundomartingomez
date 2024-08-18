@@ -5,7 +5,13 @@ import mongoose from 'mongoose';
 import session from 'express-session';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUiExpress from 'swagger-ui-express';
+import multer from 'multer';
 import __dirname, { passportCall } from './utlis.js';
+import config from './config/config.js';
+import initializePassport from './config/passportConfig.js';
+import logger from './logger.js';
 import productsRouter from './routes/productsRouter.js';
 import cartsRouter from './routes/cartsRouter.js';
 import viewsRouter from './routes/viewsRouter.js';
@@ -14,14 +20,9 @@ import viewsCartsRouter from './routes/viewsCartsRouter.js';
 import sessionRouter from './routes/sessionRouter.js';
 import usersRouter from './routes/usersRouter.js';
 import mockingRouter from './routes/mockingRouter.js';
-import initializePassport from './config/passportConfig.js';
 import loggerRouter from './routes/loggerRouter.js';
 import productModel from './dao/models/productModel.js';
 import messageModel from './dao/models/messageModel.js';
-import config from './config/config.js';
-import logger from './logger.js';
-import swaggerJsdoc from 'swagger-jsdoc';
-import swaggerUiExpress from 'swagger-ui-express';
 
 const app = express();
 const port = 8080;
@@ -49,6 +50,7 @@ app.engine('handlebars', engine({extname: '.handlebars', defaultLayout: 'main.ha
 app.set('views', __dirname + '/views');
 app.set('view engine', 'handlebars');
 
+app.use('/documents', express.static(__dirname + '/public'));
 app.use('/', viewsRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/cart', cartsRouter);

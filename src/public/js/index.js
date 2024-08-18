@@ -9,7 +9,7 @@ socket.on('product', product => {
       <td>${product._id}</td>
       <td>${product.title}</td>
       <td>${product.category ? product.category : 'No tiene categoria'}</td>
-      <td>${product.thumbnail ? product.thumbnail : 'No tiene imagen'}</td>
+      <td>${product.thumbnail ? `<a href='${product.thumbnail}' target='_blank'>${product.thumbnail}</a>` : 'No tiene imagen'}</td>
       <td>${product.description}</td>
       <td>$${product.price}</td>
       <td>${product.code}</td>

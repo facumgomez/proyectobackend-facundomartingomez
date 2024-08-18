@@ -110,3 +110,15 @@ export const passwordChangedViews = async (req, res) => {
     console.log(error);
   };
 };
+
+export const uploadFileView = async (req, res) => {
+  try {
+      const user = req.user;
+      if(!user) return res.status(400).render('error', { error: 'Inicie sesión para continuar' });
+      console.log(req.user);
+      const uid = req.user._id.toString();
+      res.render('sessions/uploadFiles', { uid });
+  } catch (error) {
+    console.log(error);
+  };
+};

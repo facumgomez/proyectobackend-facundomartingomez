@@ -11,9 +11,29 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'user'
   },
-  cart: [{
-    type: Schema.Types.ObjectId, ref: 'cart'
-  }]
+  cart: [
+    {
+      type: Schema.Types.ObjectId, 
+      ref: 'carts'
+    }
+  ],
+  documents: {
+    type: [{
+      name: {
+        type: String,
+        required: true
+      },
+      reference: {
+        type: String,
+        required: true
+      }
+  }],
+  default: []
+  },
+  last_connection: { 
+    type: Date, 
+    required: true 
+  }
 });
 
 mongoose.set('strictQuery', false);

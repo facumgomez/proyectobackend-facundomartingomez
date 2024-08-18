@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import passport from 'passport';
-import { changePassword, changePasswordViews, closeSession, createLogin, createLoginGitHub, createSession, failLoginViews, failRegisterViews, getCurrentSession, getRegisterViews, loginViews, passwordChangedViews, setNewPassword, setNewPasswordViews } from '../controller/sessionController.js';
+import { changePassword, changePasswordViews, closeSession, createLogin, createLoginGitHub, createSession, failLoginViews, failRegisterViews, getCurrentSession, getRegisterViews, loginViews, passwordChangedViews, setNewPassword, setNewPasswordViews, uploadFileView } from '../controller/sessionController.js';
 import { isAdmin } from '../middlewares/auth.js';
 
 const router = Router();
@@ -20,5 +20,6 @@ router.post('/api/sessions/changePassword', changePassword);
 router.get('/setPassword', setNewPasswordViews);
 router.post('/api/sessions/setPassword', setNewPassword);
 router.get('/passwordChanged', passwordChangedViews);
+router.get('/upload', uploadFileView);
 
 export default router;
