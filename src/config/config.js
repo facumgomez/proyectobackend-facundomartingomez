@@ -1,5 +1,4 @@
 import dotenv from 'dotenv';
-
 dotenv.config();
 
 export default {
@@ -9,5 +8,8 @@ export default {
   ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
   ENVIRONMENT: process.env.ENVIRONMENT,
   MAIL_USER: process.env.MAIL_USER,
-  MAIL_PASS: process.env.MAIL_PASS
+  MAIL_PASS: process.env.MAIL_PASS,
+  JWT_PRIVATE_KEY: process.env.JWT_PRIVATE_KEY ,
+  JWT_COOKIE_NAME: process.env.JWT_COOKIE_NAME,
+  SESSION_SECRET: process.env.SESSION_SECRET
 };

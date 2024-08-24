@@ -1,0 +1,29 @@
+<div class='w-100 d-flex align-items-center justify-content-center'>
+  <div class='container d-flex flex-column align-items-center justify-content-center'>
+    <h1 class='mb-5'>Registro del usuario</h1>
+    <form style='width: 60%;' class='d-flex flex-column gap-1' action='/api/sessions/register' method='post'>
+      <div class='input-group mb-3'>
+        <span class='input-group-text'>Nombre:</span>
+        <input type='text' name='first_name' class='form-control' placeholder='Ingrese su nombre' aria-label='first_name' aria-describedby='basic-addon1' required>
+      </div>
+      <div class='input-group mb-3'>
+        <span class='input-group-text'>Apellido:</span> 
+        <input type='text' name='last_name' class='form-control' placeholder='Ingrese su apellido' aria-label='first_name' aria-describedby='basic-addon1' required>
+      </div>
+      <div class='input-group mb-3'>
+        <span class='input-group-text'>Email</span>
+        <input type='email' name='email' class='form-control' placeholder='Ingrese su email' aria-label='email' aria-describedby='basic-addon1' required>
+      </div>
+      <div class='input-group mb-3'>
+        <span class='input-group-text'>Edad:</span>
+        <input type='number' name='age' class='form-control' placeholder='Ingrese su edad' aria-label='age' aria-describedby='basic-addon1' required>
+      </div>
+      <div class='input-group mb-3'>
+        <span class='input-group-text'>Contraseña:</span>
+        <input type='password' name='password' class='form-control' placeholder='Ingrese su contraseña' aria-label='password' aria-describedby='basic-addon1' required>
+      </div>
+      <input class='btn btn-primary mb-1' type='submit' value='Crear usuario nuevo'>
+      <a href='http://localhost:8080/login' class='btn btn-outline-primary'>Regresar al inicio</a>
+    </form>
+  </div>
+</div>

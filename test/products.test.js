@@ -35,12 +35,12 @@ describe('Testing Products Module', () => {
   });
 
   describe('Test GET endpoints', () => {
-    it('El endpoint POST /api/products debe obetener todos los productos', async () => {
+    it('El endpoint GET /api/products debe obetener todos los productos', async () => {
       const response = await requester.get('/api/products');
       expect(response.statusCode).to.be.equal(200);
     });
 
-    it('El endpoint POST /api/products/:pid debe obtener un producto por id', async () => { 
+    it('El endpoint GET /api/products/:pid debe obtener un producto por id', async () => { 
       const response = await requester.get('/api/products/66b19830498cb72548de9561');
       expect(response.statusCode).to.be.equal(200);
     });

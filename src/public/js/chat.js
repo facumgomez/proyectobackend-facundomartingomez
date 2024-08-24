@@ -1,66 +1,76 @@
 const socket = io();
+const chatBox = document.getElementById('chatBox');
+const messageLogs = document.getElementById('messageLogs');
+const sendMsgBtn = document.getElementById('sendMsgBtn');
+const chatAvatar = document.getElementById('chatAvatar');
+const chatPlaceholder = document.getElementById('chatPlaceholder');
 
-let user;
-let chatBox = document.getElementById('chatBox');
-let messageLogs = document.getElementById('messageLogs');
-let data;
+async function getUser () {
+  const res = await fetch(`api/sessions/current`, { method: 'GET' });
+  const data = await res.json();
+  return data.payload;
+};
 
-socket.on('message', message => {
-  data = message;
+sendMsgBtn.addEventListener('click', async () => {
+  const user = await getUser();
+  if (chatBox.value.trim().length > 0) {
+    socket.emit('message', {
+      user: user.first_name,
+      email: user.email,
+      message: chatBox.value
+    });
+    chatBox.value = '';
+  };
 });
 
-socket.on('messageLogs', message => {
-  rend (message);
-});
-
-const rend = (message) => {
-  let messages = '';
-
-  message.forEach(message => {
-    const isCurrentUser = message.user === user;
-    const messageClass = isCurrentUser ? 'myMessage' : 'otherMessage';
-    messages = messages + `<div class="${messageClass}">${message.user} : ${message.message}</div>`
-  });
-
-  messageLogs.innerHTML = messages;
-  chatBox.scrollIntoView(false);
-}
-
-Swal.fire({
-  title: 'Identifcación',
-  input: 'email',
-  text: 'Ingresa tu correo electronico',
-
-  inputValidator: (value) => {
-    if (!value)
-      return 'Debes ingresar tu correo electornico';
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!emailRegex.test(value))
-    return 'Ingrese un correo electronico valido';
-  return null;
-  },
-  allowOutsideClick: false
-}).then(resp => {
-  if (resp.isConfirmed){
-    user = resp.value;
-    rend(message);
-  }
-});
-
-chatBox.addEventListener('keyup', e => {
-  if (e.key === 'Enter') {
-    if(chatBox.value.trim().length > 0){
-      const message = chatBox.value;
-      socket.emit('message', { user, message});
+chatBox.addEventListener('keyup', async event => {
+  const user = await getUser();
+  if (event.key === 'Enter') {
+    if (chatBox.value.trim().length > 0) {
+      socket.emit('message', {
+        user: user.first_name,
+        email: user.email,
+        message: chatBox.value
+      });
       chatBox.value = '';
-    }
-  }
+    };
+  };
 });
 
-socket.on('nuevoUser', () => {
-  Swal.fire({
-    text: 'Nuevo usuario conectado',
-    toast: true,
-    position: 'top-right'
+socket.on('logs', async data => {
+  let messages = '';
+  const user = await getUser();
+  chatPlaceholder.style.display = 'none';
+  data.forEach(element => {
+    if (element.email == user.email) {
+      messages += `
+        <div class='w-100 d-flex flex-row align-items-end gap-1 mt-2'>
+          <p style='margin-bottom: -6px; max-width: 150px;' class='text-break'>${element.user}</p>
+          <p style='margin-bottom: -3px; border-radius: 15px 15px 15px 0; max-width: 350px;' class='text-break p-1 px-3 bg-primary text-white'>
+            ${element.message}
+          </p>
+        </div>
+      `
+    } else {
+      messages += `
+        <div class='w-100 d-flex flex-row align-items-end justify-content-end gap-1 mt-2'>
+          <p style='margin-bottom: -3px;border-radius: 15px 15px 0px 15px; max-width: 350px;' class='text-break p-1 px-3 bg-primary text-white'>
+            ${element.message}
+          </p>
+          <p style='margin-bottom: -6px; max-width: 150px;' class='text-break'>${element.user}</p>
+        </div>
+      `
+    };
   });
+  messageLogs.innerHTML = messages;
+  messageLogs.scrollTop = messageLogs.scrollHeight;
 });
+
+window.onload = async function() {
+  const user = await getUser();
+  if (user.documents.profile_pic.status) {
+    const src = user.documents.profile_pic.reference.split('public');
+    chatAvatar.src = `${src[1]}`;
+    chatAvatar.alt = `${user.documents.name}`;
+  };
+};

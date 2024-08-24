@@ -1,18 +1,16 @@
 import { Router } from 'express';
-import { addProductInCart, createCart, deleteCart, deleteCartProduct, deleteCartProducts, getCartById, getCarts, purchaseCart, updateCartProducts, updateProductQuantity } from '../controller/cartsController.js';
-import { isUser } from '../middlewares/auth.js';
+import { addProduct, createCart, deleteProduct, deleteProducts, getCart, purchaseCart, updateProducts, updateQuantity } from '../controller/cartsController.js';
+import { passportCall } from '../middlewares/passportCall.js';
 
 const router = Router();
 
-router.get('/', getCarts);
-router.get('/:cid', getCartById);
+router.get('/:cid', getCart);
 router.post('/', createCart);
-router.post('/:cid/products/:pid', isUser,addProductInCart);
+router.post('/:cid/product/:pid', passportCall('jwt', 'premiumOrUser'), addProduct);
 router.post('/:cid/purchase', purchaseCart);
-router.put('/:cid', updateCartProducts);
-router.put('/:cid/products/:pid', updateProductQuantity);
-router.delete('/:cid/products/:pid', deleteCartProduct);
-router.delete('/:cid', deleteCartProducts);
-router.delete('/cart/:cid', deleteCart);
+router.put('/:cid', updateProducts);
+router.put('/:cid/products/:pid', updateQuantity);
+router.delete('/:cid/products/:pid', deleteProduct);
+router.delete('/:cid', deleteProducts);
 
-export default router;
+export default router; 

@@ -1,6 +1,7 @@
 import { Schema, model } from 'mongoose';
 
 const messageCollection = 'messages';
+
 const messageSchema = new Schema({
   user: {
     type: String,

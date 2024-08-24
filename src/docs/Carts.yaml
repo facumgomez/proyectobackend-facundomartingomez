@@ -1,21 +1,5 @@
 paths:
   /api/carts:
-    get:
-      summary: Obtiene todos los carritos
-      tags: 
-        - Carts
-      responses:
-        200:
-          description: Muestra lista de carritos
-          content: 
-            application/json:
-              type: object
-              schema: 
-                type: array
-                items:
-                  $ref: '#components/schemas/Carts'                              
-        400: 
-          description: Error en el pedido al servidor
     post:     
       summary: Crea un carrito
       tags: 
@@ -33,7 +17,7 @@ paths:
                   message: 
                     type: String
                     example: Create cart
-                  newCart:
+                  payload:
                     type: object
                     example:
                       $ref: '#components/schemas/Cart/example'          
@@ -58,9 +42,14 @@ paths:
           content: 
             application/json:
               schema: 
-                type: array
-                items:
-                  $ref: '#components/schemas/Cart'
+                properties: 
+                  status:
+                    type: String
+                    example: success
+                  payload:  
+                    type: array
+                    example:
+                      $ref: '#components/schemas/Cart/example'
         400: 
           description: Error en el pedido al servidor  
     put:           
@@ -102,8 +91,17 @@ paths:
           content: 
             application/json:
               schema: 
-                items:
-                  $ref: '#components/schemas/DeletedCart'
+                properties: 
+                  status:
+                    type: String
+                    example: success
+                  message: 
+                    type: String
+                    example: The products has been removed from the cart 
+                  payload:  
+                    type: array
+                    example:
+                      $ref: '#components/schemas/Cart/example'
         400: 
           description: Error en el pedido al servidor  
 
@@ -181,25 +179,7 @@ paths:
         200:
           description: Mensaje de que el producto se eliminó con éxito
         400: 
-          description: Error en el pedido al servidor
-
-  /api/carts/cart/{cid}:
-    delete: 
-      summary: Elimina un carrito a partir de su id
-      tags: 
-        - Carts
-      parameters:
-      - name: cid
-        in: path
-        required: true
-        description: ID del carrito que desea solicitar 
-        schema:
-          $type: string       
-      responses:
-        200:
-          description: Mensaje de que el carrito se eliminó con éxito
-        400: 
-          description: Error en el pedido al servidor    
+          description: Error en el pedido al servidor  
 
 components:
   schemas:
@@ -222,24 +202,6 @@ components:
       example: 
         _id: 66a9a36b651b92c5a64a0387
         products: []
-    Carts:
-      type: object
-      properties:
-        status:
-          type: ObjectId
-          description: Id autogenerado de Mongo
-        carts:
-          type: Array
-          description: Array contenedor de carritos
-      example: 
-        status: success
-        carts: [{_id: 6631d9e85f73b801b3f498b0, products: [],}]
-    deletedCart: 
-      example:  
-        message: Products deleted
-        cart: 
-          _id: 665d3e144692bba85d79d933
-          products: []
   requestBodies:
     updateCartProducts:
       type: object

@@ -1,6 +1,7 @@
 import mongoose, { Schema, model } from 'mongoose'; 
 
 const userCollection = 'users';
+
 const userSchema = new mongoose.Schema({
   first_name: String,
   last_name: String,
@@ -18,17 +19,8 @@ const userSchema = new mongoose.Schema({
     }
   ],
   documents: {
-    type: [{
-      name: {
-        type: String,
-        required: true
-      },
-      reference: {
-        type: String,
-        required: true
-      }
-  }],
-  default: []
+    type: Object,
+    required: true
   },
   last_connection: { 
     type: Date, 

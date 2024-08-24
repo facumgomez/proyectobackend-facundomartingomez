@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import logger from '../logger.js';
+import logger from '../helpers/logger.js';
 
 const router = Router();
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   try {
     logger.debug('Testing debug logger.');
     logger.http('Testing http logger!');
@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     logger.fatal('Testing fatal logger!');
     res.status(200).json({ status: 'success', message: 'Logger test completed.' });
   } catch (error) {
-    logger.error(error);
+    next(error);
   };
 })
 

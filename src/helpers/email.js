@@ -13,13 +13,12 @@ export default class Email {
     });
   };
 
-  send = async(user, subject, web) => {
-    console.log(user);
+  send = async (user, subject, html) => {
     const result = await this.transport.sendMail({
       from: config.MAIL_USER,
       to: user,
       subject,
-      web
+      html
     });
 
     return result;

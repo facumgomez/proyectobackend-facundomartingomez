@@ -3,15 +3,11 @@ import __dirname from '../utlis.js';
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    if(file.fieldname == 'profile') {
+    if (file.fieldname == 'profile') {
       file.originalname = 'profile-' + file.originalname;
       cb(null, (`${__dirname}` + '/public/profiles'));
     };
-    if(file.fieldname == 'product') {
-      file.originalname = 'product-' + file.originalname;
-      cb(null, (`${__dirname}` + '/public/products'));
-    };
-    if(file.fieldname == 'identification' || file.fieldname == 'domicile' || file.fieldname == 'accStatus') {
+    if (file.fieldname == 'identification' || file.fieldname == 'domicile' || file.fieldname == 'accStatus') {
       cb(null, (`${__dirname}` + '/public/documents'));
     };
   },
@@ -20,4 +16,11 @@ const storage = multer.diskStorage({
   }
 });
 
-export const upload = multer({storage: storage});
+export const fields = [
+  { name: 'profile', maxCount: 1 },
+  { name: 'identification', maxCount: 1},
+  { name: 'domicile', maxCount: 1},
+  { name: 'accStatus', maxCount: 1}
+];
+
+export const upload = multer({ storage: storage });

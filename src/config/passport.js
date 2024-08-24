@@ -1,12 +1,15 @@
 import passport from 'passport';
+import passport_jwt from 'passport-jwt';
 import local from 'passport-local';
 import GithubStrategy from 'passport-github2';
+
+import config from './config.js';
 import userModel from '../dao/models/userModel.js';
 import cartModel from '../dao/models/cartModel.js';
-import { createPassword, isValidPassword, generateToken, extractCookie } from '../utlis.js';
-import passport_jwt from 'passport-jwt';
+import { createPassword, isValidPassword } from '../helpers/bcrypt.js';
+import { generateToken, extractCookie } from '../helpers/jwt.js';
 import { JWT_PRIVATE_KEY } from './credentials.js';
-import config from './config.js';
+
 
 const LocalStrategy = local.Strategy;
 const JWTStrategy = passport_jwt.Strategy;
@@ -17,26 +20,44 @@ const initializePassport = () => {
     passReqToCallback: true,
     usernameField: 'email'
   }, async (req, username, password, done) => {
-    const { first_name, last_name, email, age } = req.body;
     try {
+      const { first_name, last_name, email, age } = req.body;
       const user = await userModel.findOne({ email: username });
-      if (user) {
-        console.log('El usuario ya existe');
-        return done(null, false);
-      };
-      const newCart = await cartModel.create({});
+      if (user) return done(null, false);
+      const cart = await cartModel.create({});
       const newUser = {
         first_name,
         last_name,
         email,
         age,
         password: createPassword(password),
-        cart: newCart._id,
-        last_connection: Date.now()
+        cart: cart._id,
+        last_connection: Date.now(),
+        documents: {
+          profile_pic: {
+            status: false,
+            name: '',
+            reference: ''
+          },
+          identification: {
+            status: false,
+            name: '',
+            reference: ''
+          },
+          domicile: {
+            status: false,
+            name: '',
+            reference: ''
+          },
+          acc_status: {
+            status: false,
+            name: '',
+            reference: ''
+          }
+        }
       };
-      if(newUser.email == config.ADMIN_EMAIL && isValidPassword(newUser, config.ADMIN_PASSWORD)) {
-        newUser.role = 'admin';
-      };
+
+      if (newUser.email == config.ADMIN_EMAIL && isValidPassword(newUser, config.ADMIN_PASSWORD)) newUser.role = 'admin';
       const result = await userModel.create(newUser);
       return done(null, result);
     } catch(error) {
@@ -48,13 +69,11 @@ const initializePassport = () => {
     usernameField: 'email'
   }, async (username, password, done) => {
     try {
-      const user = await userModel.findOne({ email: username});
-      if(!user) {
-        console.log('Usuario no encontrado');
-        return done(null, user);
-      };
-      if(!isValidPassword(user, password)) 
-        return done(null, false);
+      const user = await userModel.findOne({ email: username });
+      if (!user) return done(null, user);
+      if (!isValidPassword(user, password)) return done(null, false);
+      user.last_connection = Date.now();
+      await userModel.findOneAndUpdate({ email: username }, user);
       const token = generateToken(user);
       user.token = token;
       return done(null, user);
@@ -69,26 +88,30 @@ const initializePassport = () => {
     callbackURL: 'http://localhost:8080/api/sessions/callbackGithub'
   }, async (tokenAccess, tokenRefresh, profile, done) => {
     try {
-      const user = await userModel.findOne({email: profile._json.email});
-      if(user) {
+      const user = await userModel.findOne({ email: profile._json.email });
+      if (user) {
         const token = generateToken(user);
         user.token = token;
+        user.last_connection = Date.now();
         return done(null, user);
       };
 
+      const cart = await cartModel.create({});
       const newUser = await userModel.create({
         first_name: profile._json.name,
         last_name: '',
         email: profile._json.email,
-        age: '',
-        password: ''
+        age: undefined,
+        password: '',
+        cart: cart._id,
+        last_connection: Date.now()
       });
-      let userCreated = await userModel.findOne({ email: newUser.email});
+      const userCreated = await userModel.findOne({ email: newUser.email });
       const token = generateToken(userCreated);
       userCreated.token = token;
       return done(null, userCreated);
     } catch (error) {
-      return console.log(error);
+      return done(error);
     };
   }));
 

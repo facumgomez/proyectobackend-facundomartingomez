@@ -1,138 +1,121 @@
 import ticketModel from '../../dao/models/ticketModel.js';
-import { productService } from '../repository.js';
+import CustomError from '../errors/CustomError.js';
+import EErrors from '../errors/enums.js';
+import { productService, userService } from '../repository.js';
+import GenericRepository from './genericRepository.js';
 
-export default class cartsRepository {
+export default class CartsRepository extends GenericRepository {
   constructor(dao) {
-    this.dao = dao;
+    super(dao);
   };
 
-  getCarts = async () => {
-    return await this.dao.getAll();
-  };
-
-  getCartById = async (cid) => {
+  getPopulated = async (cid) => {
     return await this.dao.getByIdPopulate(cid);
   };
 
-  getById = async (cid) => {
-    return await this.dao.getById(cid);
-  };
+  addProduct = async (cid, pid, user) => {
+    const getProduct = await productService.getById(pid);
+    if (user.role == 'premium' && getProduct.owner == user._id) {
+      CustomError.createError({ name: 'No autorizado', message: 'No tienes los permisos para hacer esto.', code: EErrors.UNAUTHORIZED });
+    };
 
-  createCart = async () => {
-    let cartCreate = await this.dao.create();
-    return cartCreate;
-  };
-
-  addProduct = async (cid, pid) => {
-    const cartUpdate = await this.dao.getById(cid);
-    if (!cartUpdate) 
-      return null;
-    const product = cartUpdate.products.find(p => p.product == pid);
+    const cart = await this.dao.getById(cid);
+    const product = cart.products.find(p => p.product == pid);
     if (!product) {
-      cartUpdate.products.push({product: pid, quantity: 1});
-      await this.dao.update(cid, cartUpdate);
-      return cartUpdate;
+      cart.products.push({ product: pid, quantity: 1 });
     } else {
       product.quantity++;
-      await this.dao.update(cid, cartUpdate);
-      return cartUpdate;
     };
+    return await this.dao.update(cid, cart);
   };
 
   deleteProduct = async (cid, pid) => {
     const cart = await this.dao.getById(cid);
     const product = cart.products.findIndex(p => p.product == pid);
-    if (product <= 0)
-      return null;
+    if (product < 0) {
+      CustomError.createError({ name: 'error', message: 'No hay ningún producto con ese id en este carrito', code: EErrors.BAD_REQUEST });
+    };
     cart.products.splice(product, 1);
-    await this.dao.update(cid, cart);
-    return cart;
+    return await this.dao.update(cid, cart);
   };
 
-  updateCart = async (cid, body) => {
+  updateProducts = async (cid, body) => {
     const cart = await this.dao.getById(cid);
     cart.products = body;
-    await this.dao.update(cid, cart);
-    return cart;
+    return await this.dao.update(cid, cart);
   };
 
-  updateQuantity = async (cid, pid, body) => {
+  updateQuantity = async (cid, pid, quantity) => {
     const cart = await this.dao.getById(cid);
-    if (!cart) 
-      return null;
     const product = cart.products.find(p => p.product == pid);
-    if (!product) 
-      return null;
-    product.quantity = body;
-    await this.dao.update(cid, cart);
-    return cart;
+    if (!product) {
+      CustomError.createError({ name: 'error', message: 'No hay ningún producto con ese id en este carrito', code: EErrors.BAD_REQUEST });
+    };
+    
+    if (!quantity) {
+      CustomError.createError({ name: 'error', message: 'La propiedad ingresada no es válida. Debes seguir el formato.', code: EErrors.BAD_REQUEST });         
+    };
+    product.quantity = quantity;
+    return await this.dao.update(cid, cart);
   };
 
-  clearCart = async (cid) => {
+  clearProducts = async (cid) => {
     const cart = await this.dao.getById(cid);
-    if (!cart) 
-      return null;
     cart.products = [];
-    await this.dao.update(cid, cart);
-    return cart;
+    return await this.dao.update(cid, cart);
   };
 
-  deleteCart = async (cid) => {
-    return await this.dao.delete(cid);
-  };
-
-  purchaseComplete = async (cid, user) => {
+  purchase = async (cid, user) => {
     const unavailableProducts = [];
-    const purchaseProducts = [];
+    const purchasedProducts = [];
     let total = 0;
     const cart = await this.dao.getById(cid);
-    for(let i = 0; i < cart.products.length ; i++) {
+    if (cart.products.length == 0) {
+      CustomError.createError({ name: 'error', message: 'El carrito está vacío.', code: EErrors.BAD_REQUEST });         
+    };
+    for (let i = 0; i < cart.products.length; i++) {
       let pid = cart.products[i].product.toString();
-      let product = await productService.getProductById(pid);
+      let product = await productService.getById(pid);
       let productCart = cart.products[i];
       if (product.stock < productCart.quantity) {
         unavailableProducts.push(productCart);
       } else {
         product.stock -= productCart.quantity;
         total += product.price * productCart.quantity;
-        purchaseProducts.push(productCart);
-        await productService.updateProduct(pid, product);
+        purchasedProducts.push(productCart);
+        await productService.update(pid, { stock: product.stock });
       };
     };
     cart.products = unavailableProducts;
     await this.dao.update(cid, cart);
     const tickets = await ticketModel.find();
-    if (purchaseProducts.length !== 0) {
+    if (purchasedProducts.length !== 0) {
       let newTicket;
       if (tickets.length === 0) {
-        newTicket = await ticketModel.create({ 
-          code: '1',
-          purchaseDatetime: Date.now(),
-          amount: total,
-          purchaser: user
-        });
+        newTicket = await ticketModel.create({ code: '1', purchase_datetime: Date.now(), amount: total, purchaser: user.first_name });
       } else {
-        const latestCode = tickets[tickets.length - 1].code;
-        const newCode = (parseInt(latestCode) + 1);
-        newTicket = await ticketModel.create({ 
-          code: newCode,
-          purchaseDatetime: Date.now(),
-          amount: total,
-          purchaser: user
-        });
-      }
+        const lastCode = tickets[tickets.length - 1].code;
+        const newCode = (parseInt(lastCode) + 1);
+        newTicket = await ticketModel.create({ code: newCode, purchase_datetime: Date.now(), amount: total, purchaser: user.first_name });
+      };
+      const html = `
+        <h1>¡Compra realizada con éxito!</h1><br>
+        <p>Hola ${newTicket.purchaser}, tenemos el agrado de comunicarnos con usted para informarle que su proceso de compra se ha realizado con exito. A continuación te adjuntamos los datos correspondientes a su compra:</p>
+        <p>Horario realizada la compra: ${newTicket.purchase_datetime}<p>
+        <p>Código del ticket: ${newTicket.code}<p>
+        <p>Importe total: $${newTicket.amount}</p><br>
+        <h2>¡Gracias por elegirnos!</h2>`;
+      await userService.sendMail(user.email, 'Ticket de compra realizado', html);
       return {
-        status: 'success',
-        message: 'Éxitosa compra.',
         ticket: newTicket,
         newCart: cart,
-        unavailableProducts: unavailableProducts
+        unavailable_products: unavailableProducts
       };
     } else {
       return {
         status: 'error',
         message: 'No hay stock suficiente.',
-        unavailablProducts: unavailableProducts
+        unavailabl_products: unavailableProducts
       };
     };
   };

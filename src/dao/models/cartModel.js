@@ -1,6 +1,7 @@
-import mongoose, { Schema, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 const cartCollection = 'carts';
+
 const cartSchema = new Schema({
   products: {
     type: [{
@@ -19,7 +20,6 @@ const cartSchema = new Schema({
   }
 });
 
-mongoose.set('strictQuery', false);
 cartSchema.pre('find', function() {
   this.populate('products.product');
 });
@@ -30,6 +30,7 @@ cartSchema.set('toJSON', {
     return ret;
   }
 });
+
 const cartModel = model(cartCollection, cartSchema);
 
 export default cartModel;
