@@ -4,7 +4,6 @@ import { passportCall } from '../middlewares/passportCall.js';
 
 const router = Router();
 
-router.get('/realtimeproducts', (req, res) => { return res.render('realTimeProducts', { style: 'style.css' }) });
 router.get('/', getHome);
 router.get('/login', loginView);
 router.get('/register', registerView);

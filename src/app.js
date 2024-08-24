@@ -29,6 +29,7 @@ const PORT = config.PORT || 8080;
 const serverExpress = app.listen(PORT, () => {logger.info(`Corriendo aplicacion en el puerto ${PORT}`)});
 
 const io = new Server (serverExpress);
+
 io.on('connection', socket => {
   socket.on('message', async (data) => {
     await messageService.create(data);
