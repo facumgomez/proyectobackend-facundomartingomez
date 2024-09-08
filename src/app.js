@@ -26,7 +26,7 @@ import { messageService } from './services/repository.js';
 
 const app = express();
 const PORT = config.PORT || 8080;
-const serverExpress = app.listen(PORT, () => {logger.info(`Corriendo aplicacion en el puerto ${PORT}`)});
+const serverExpress = app.listen(PORT, () => logger.info(`Corriendo aplicacion en el puerto ${PORT}`));
 
 const io = new Server (serverExpress);
 

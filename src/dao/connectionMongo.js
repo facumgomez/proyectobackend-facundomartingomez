@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import config from '../config/config.js';
 import logger from '../helpers/logger.js';
 
-const URI = config.MONGO_URL || 'mongodb://localhost:27017/ecommerce'; 
+const URI = config.MONGO_URL;
 mongoose.set('strictQuery', false);
 
 const connectMongoDB = async () => {
