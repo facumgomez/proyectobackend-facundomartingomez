@@ -115,7 +115,7 @@ export default class CartsRepository extends GenericRepository {
       return {
         status: 'error',
         message: 'No hay stock suficiente.',
-        unavailabl_products: unavailableProducts
+        unavailable_products: unavailableProducts
       };
     };
   };

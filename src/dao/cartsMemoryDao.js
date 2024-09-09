@@ -32,7 +32,7 @@ export default class CartsMemoryDao {
   };
 
   update = async (cid, cartUpdate) => {
-    return result = await this.model.findOneAndUpdate({ _id: cid }, cartUpdate), { new: true };
+    return result = await this.model.findOneAndUpdate({ _id: cid }, cartUpdate, { new: true });
   };
 
   delete = async (cid) => {

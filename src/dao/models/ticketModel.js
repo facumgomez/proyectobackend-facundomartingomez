@@ -1,6 +1,6 @@
 import  mongoose, { Schema, model } from 'mongoose';
 
-const ticketCollection = 'tickets';
+const ticketCollection = 'ticket';
 
 const ticketSchema = new Schema({
   code: { 

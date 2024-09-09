@@ -7,10 +7,10 @@ const router = Router();
 router.get('/:cid', getCart);
 router.post('/', createCart);
 router.post('/:cid/product/:pid', passportCall('jwt', 'premiumOrUser'), addProduct);
-router.post('/:cid/purchase', purchaseCart);
-router.put('/:cid', updateProducts);
-router.put('/:cid/products/:pid', updateQuantity);
-router.delete('/:cid/products/:pid', deleteProduct);
-router.delete('/:cid', deleteProducts);
+router.post('/:cid/purchase', passportCall('jwt', 'user'), purchaseCart);
+router.put('/:cid', passportCall('jwt', 'user'), updateProducts);
+router.put('/:cid/products/:pid', passportCall('jwt', 'user'), updateQuantity);
+router.delete('/:cid/products/:pid', passportCall('jwt', 'user'), deleteProduct);
+router.delete('/:cid', passportCall('jwt', 'user'), deleteProducts);
 
 export default router; 

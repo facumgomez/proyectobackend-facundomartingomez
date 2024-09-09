@@ -8,7 +8,7 @@ export const createRegister = async (req, res) => {
 export const createLogin = async (req, res, next) => {
   try {
     if (!req.user) return res.status(400).send({ status: 'error', error: 'Credenciales inválidas!' });
-    return res.cookie(JWT_COOKIE_NAME, req.user.token).redirect('/products');
+    return res.cookie(JWT_COOKIE_NAME, req.user.token).status(200).json({status: 'success', message: 'Inicio de sesión exitoso!', token, cart_id: req.user.cart});
   } catch (error) {
     next(error);
   };
