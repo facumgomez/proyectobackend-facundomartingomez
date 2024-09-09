@@ -2,13 +2,15 @@ import { JWT_COOKIE_NAME } from '../config/credentials.js';
 import UserDTO from '../dao/dto/userDTO.js';
 
 export const createRegister = async (req, res) => {
-  return res.redirect('/login');
+  return res.status(200).json({ status: 'success', message: 'Usuario registrado exitosamente' });
 };
 
 export const createLogin = async (req, res, next) => {
   try {
     if (!req.user) return res.status(400).send({ status: 'error', error: 'Credenciales inválidas!' });
-    return res.cookie(JWT_COOKIE_NAME, req.user.token).status(200).json({status: 'success', message: 'Inicio de sesión exitoso!', token, cart_id: req.user.cart});
+    const token = req.user.token;
+    const cart_id = req.user.cart;
+    return res.cookie(JWT_COOKIE_NAME, token).status(200).json({ status: 'success', message: 'Inicio de sesión exitoso!', token, cart_id });
   } catch (error) {
     next(error);
   };

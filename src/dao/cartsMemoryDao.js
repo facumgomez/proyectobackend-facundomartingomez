@@ -8,7 +8,7 @@ export default class CartsMemoryDao {
   };
 
   getAll = async () => {
-    return result = await this.model.find();
+    return await this.model.find();
   };
 
   getByIdPopulate = async (cid) => {
@@ -28,14 +28,14 @@ export default class CartsMemoryDao {
   };
 
   create = async () => {
-    return result = await this.model.create({});
+    return await this.model.create({});
   };
 
   update = async (cid, cartUpdate) => {
-    return result = await this.model.findOneAndUpdate({ _id: cid }, cartUpdate, { new: true });
+    return await this.model.findOneAndUpdate({ _id: cid }, cartUpdate, { new: true });
   };
 
   delete = async (cid) => {
-    return result = await this.model.deleteOne({ _id: cid });
+    return await this.model.deleteOne({ _id: cid });
   }; 
 }
