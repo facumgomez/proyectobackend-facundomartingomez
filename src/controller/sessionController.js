@@ -10,7 +10,7 @@ export const createLogin = async (req, res, next) => {
     if (!req.user) return res.status(400).send({ status: 'error', error: 'Credenciales inválidas!' });
     const token = req.user.token;
     const cart_id = req.user.cart;
-    return res.cookie(JWT_COOKIE_NAME, token).status(200).json({ status: 'success', message: 'Inicio de sesión exitoso!', token, cart_id });
+    return res.cookie(JWT_COOKIE_NAME, token).status(200).json({ status: 'success', message: 'Inicio de sesión exitoso!', cart_id, token});
   } catch (error) {
     next(error);
   };
